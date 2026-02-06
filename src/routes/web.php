@@ -13,6 +13,51 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/register', function () {
+    return view('auth.register');
 });
+
+Route::get('/login', function () {
+    return view('auth.login');
+});
+
+Route::get('/attendance', function () {
+    return view('attendance.index');
+});
+
+Route::get('/attendance/list', function () {
+    return view('attendance.list');
+});
+
+Route::get('/attendance/detail/{id}', function () {
+    return view('attendance.detail');
+});
+
+Route::get('/stamp_correction_request/list', function () {
+    return view('stamp_correction_request.list');
+});
+
+
+Route::prefix('admin')->group(function () {
+
+    Route::get('/login', function () {
+        return view('admin.auth.login');
+    });
+
+    Route::get('/attendance/list', function () {
+        return view('admin.attendance.list');
+    });
+
+    Route::get('/attendance/{id}', function () {
+        return view('admin.attendance.detail');
+    });
+
+    Route::get('/staff/list', function () {
+        return view('admin.staff.list');
+    });
+
+    Route::get('/stamp_correction_request/approve/{id}', function () {
+        return view('admin.stamp_correction_request.approve');
+    });
+});
+

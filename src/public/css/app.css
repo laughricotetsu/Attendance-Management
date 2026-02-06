@@ -1,0 +1,63 @@
+body {
+    margin: 0;
+    background-color: #f2f2f2;
+}
+
+.header {
+    background-color: #000;
+}
+
+.header-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-logo {
+    height: 28px;
+}
+
+.nav a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 24px;
+    font-size: 14px;
+}
+
+.nav a:hover {
+    opacity: 0.7;
+}
+
+.main {
+    padding: 48px 0;
+}
+
+/* ナビ全体を横並び */
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* form も横並び要素にする */
+.nav form {
+    margin: 0;
+}
+
+/* ログアウトボタンをリンク風に */
+.logout-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0;
+}
+
+/* hover時 */
+.logout-button:hover {
+    text-decoration: underline;
+}
