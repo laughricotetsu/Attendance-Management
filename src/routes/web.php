@@ -48,16 +48,16 @@ Route::prefix('admin')->group(function () {
         return view('admin.attendance.list');
     });
 
-    Route::get('/attendance/{id}', function () {
-        return view('admin.attendance.detail');
+    Route::get('/attendance/{id}', function ($id) {
+        return view('admin.attendance.detail', compact('id'));
     });
 
     Route::get('/staff/list', function () {
         return view('admin.staff.list');
     });
 
-    Route::get('/stamp_correction_request/approve/{id}', function () {
-        return view('admin.stamp_correction_request.approve');
+    Route::get('/stamp_correction_request/approve/{id}', function ($id) {
+        return view('admin.stamp_correction_request.approve', compact('id'));
     });
-});
 
+});
