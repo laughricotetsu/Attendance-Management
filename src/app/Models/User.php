@@ -9,36 +9,27 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
-{
-    use HasApiTokens, HasFactory, Notifiable;
+    {
+        use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+        // ユーザーの勤怠（1人がたくさん）
+        public function attendances()
+        {
+            return $this->hasMany(Attendance::class);
+        }
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+        // ユーザーの修正申請（一般ユーザー）
+        public function attendanceCorrectionRequests()
+        {
+            return $this->hasMany(AttendanceCorrectionRequest::class);
+        }
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-}
+        // 管理者として承認した申請
+        public function approvedRequests()
+        {
+            return $this->hasMany(
+                AttendanceCorrectionRequest::class,
+                'approved_by'
+            );
+        }
+    }
