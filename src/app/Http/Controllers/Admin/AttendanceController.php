@@ -16,4 +16,12 @@ class AttendanceController extends Controller
 
         return view('admin.attendance.list', compact('attendances'));
     }
+
+    public function show($id)
+    {
+        $attendance = Attendance::with(['user', 'breaks'])
+            ->findOrFail($id);
+
+        return view('admin.attendance.detail', compact('attendance'));
+    }
 }

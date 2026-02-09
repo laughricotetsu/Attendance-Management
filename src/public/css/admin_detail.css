@@ -1,0 +1,79 @@
+.admin-container {
+    background: #f5f5f5;
+    min-height: calc(100vh - 80px);
+    padding: 40px 0;
+}
+
+.page-title {
+    max-width: 700px;
+    /* カード幅と揃える */
+    margin: 0 auto 24px auto;
+    font-size: 24px;
+    font-weight: bold;
+    position: relative;
+    padding-left: 12px;
+}
+
+.page-title::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 4px;
+    width: 4px;
+    height: 24px;
+    background: #000;
+}
+
+.attendance-card {
+    width: 700px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 8px;
+    padding: 24px 32px;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.row:last-child {
+    border-bottom: none;
+}
+
+.label {
+    width: 140px;
+    font-weight: bold;
+}
+
+.value {
+    flex: 1;
+}
+
+.time-range {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.time-range input {
+    width: 110px;
+    padding: 6px 8px;
+}
+
+.button-area {
+    max-width: 700px;
+    margin: 24px auto 0;
+    text-align: right;
+}
+
+.btn-black {
+    background: #000;
+    color: #fff;
+    padding: 8px 32px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
