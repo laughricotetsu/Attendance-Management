@@ -24,14 +24,16 @@
                 {{ \Carbon\Carbon::parse($attendance->work_date)->format('Y年n月j日') }}
             </div>
         </div>
-
+    <form method="POST" action="{{ route('admin.attendance.update', $attendance->id) }}">
+        @csrf
+        @method('PUT')
         {{-- 出勤・退勤 --}}
         <div class="row">
             <div class="label">出勤・退勤</div>
             <div class="value time-range">
-                <input type="time" value="{{ optional($attendance->clock_in)->format('H:i') }}">
+                <input type="time" name="clock_in" value="{{ optional($attendance->clock_in)->format('H:i') }}">
                 <span>〜</span>
-                <input type="time" value="{{ optional($attendance->clock_out)->format('H:i') }}">
+                <input type="time" name="clock_out" value="{{ optional($attendance->clock_out)->format('H:i') }}">
             </div>
         </div>
 
@@ -61,13 +63,27 @@
         <div class="row">
             <div class="label">備考</div>
             <div class="value">
-                <input type="text" value="{{ $attendance->note ?? '' }}">
+                <input type="text" name="note" value="{{ $attendance->note ?? '' }}">
             </div>
         </div>
     </div>
+        <div class="button-area">
+            @if (auth()->user()->role === 'admin')
+                <button type="submit" class="btn-black">
+                    修正
+                </button>
+            @else
+                <button
+                    type="submit"
+                    formaction="{{ route('admin.attendance.request', $attendance->id) }}"
+                    formmethod="POST"
+                    class="btn-black"
+                >
+                    修正申請
+                </button>
+            @endif
+        </div>
 
-    <div class="button-area">
-        <button class="btn-black">修正</button>
-    </div>
+    </form>
 </div>
 @endsection

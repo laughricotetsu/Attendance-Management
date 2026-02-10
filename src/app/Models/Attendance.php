@@ -12,11 +12,17 @@ class Attendance extends Model
         protected $fillable = [
             'user_id',
             'work_date',
-            'start_time',
-            'end_time',
+            'clock_in',
+            'clock_out',
             'status',
             'note',
         ];
+
+        protected $casts = [
+            'clock_in'  => 'datetime:H:i',
+            'clock_out' => 'datetime:H:i',
+            ];
+
 
         // 勤怠はユーザーに属する
         public function user()
@@ -41,13 +47,13 @@ class Attendance extends Model
 
         public function getWorkTimeAttribute()
         {
-            if (!$this->start_time || !$this->end_time) {
+            if (!$this->clock_in || !$this->clock_out) {
                 return '';
             }
 
             $workSeconds =
-                strtotime($this->end_time) - strtotime($this->start_time)
-                - $this->breaks->sum(fn($b) =>
+                strtotime($this->clock_out) - strtotime($this->clock_in)
+                - $this->breaks->sum(fn ($b) =>
                     strtotime($b->break_end) - strtotime($b->break_start)
                 );
 

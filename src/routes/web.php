@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AttendanceController;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -38,18 +41,39 @@ use App\Http\Controllers\Admin\AttendanceController;
         return view('stamp_correction_request.list');
     });
 
+    Route::post(
+        '/attendance/{attendance}/request',
+        [AttendanceController::class, 'requestCorrection']
+    )->name('attendance.request');
 
-    Route::prefix('admin')->group(function () {
 
-        Route::get('/login', function () {
-            return view('admin.auth.login');
-        });
+
+Route::post('/login', function () {
+    $user = User::first(); // 管理者想定ユーザー
+    Auth::login($user);
+
+    return redirect()->route('admin.attendance.list');
+});
+
+    Route::get('/login', function () {
+        return view('auth.login');
+    })->name('login');
+
+    // 管理画面（ログイン必須）
+    Route::prefix('admin')
+        ->name('admin.')
+        ->middleware('auth')
+        ->group(function () {
 
         Route::get('/attendance/list', [AttendanceController::class, 'index'])
-            ->name('admin.attendance.list');
+            ->name('attendance.list');
 
-        Route::get('/attendance/{id}', [AttendanceController::class, 'show'])
-            ->name('admin.attendance.detail');
+        Route::get('/attendance/{attendance}', [AttendanceController::class, 'show'])
+            ->name('attendance.detail');
+
+        Route::put('/attendance/{attendance}', [AttendanceController::class, 'update'])
+            ->name('attendance.update');
+
 
         Route::get('/staff/list', function () {
             return view('admin.staff.list');
@@ -58,5 +82,4 @@ use App\Http\Controllers\Admin\AttendanceController;
         Route::get('/stamp_correction_request/approve/{id}', function ($id) {
             return view('admin.stamp_correction_request.approve', compact('id'));
         });
-
     });
