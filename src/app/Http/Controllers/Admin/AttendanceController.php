@@ -11,6 +11,10 @@ class AttendanceController extends Controller
 {
     public function index()
     {
+            if (auth()->user()->role !== 'admin') {
+        abort(403);
+        }
+
 
         // 勤怠 + ユーザーを一緒に取得
         $attendances = Attendance::with('user')

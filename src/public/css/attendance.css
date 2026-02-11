@@ -1,0 +1,43 @@
+.attendance-container {
+    text-align: center;
+    padding-top: 100px;
+}
+
+/* ステータス */
+.status-badge {
+    display: inline-block;
+    background: #e0e0e0;
+    color: #555;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* 日付 */
+.date {
+    font-size: 20px;
+    margin-bottom: 16px;
+}
+
+/* 時刻 */
+.time {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 40px;
+}
+
+/* ボタン */
+.primary-button {
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 12px 40px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.primary-button:hover {
+    opacity: 0.8;
+}

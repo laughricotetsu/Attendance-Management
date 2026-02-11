@@ -61,3 +61,23 @@ body {
     margin: 40px auto;
     padding: 0 24px;
 }
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* ログイン前ヘッダー */
+.guest-header {
+    background: #000;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    padding-left: 40px;
+}
+
+.logo {
+    color: #fff;
+    font-size: 24px;
+    font-weight: bold;
+}

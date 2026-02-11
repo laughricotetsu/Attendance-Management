@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AttendanceController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+
 
 
 /*
@@ -23,11 +26,14 @@ use Illuminate\Support\Facades\Auth;
 
     Route::get('/login', function () {
         return view('auth.login');
-    });
+    })->name('login');
+
+    Route::post('/login', [AuthController::class, 'login'])
+        ->name('login.post');
 
     Route::get('/attendance', function () {
         return view('attendance.index');
-    });
+    })->middleware('auth')->name('attendance.index');
 
     Route::get('/attendance/list', function () {
         return view('attendance.list');
@@ -47,22 +53,18 @@ use Illuminate\Support\Facades\Auth;
     )->name('attendance.request');
 
 
+    Route::get('/admin/login', function () {
+        return view('admin.auth.login');
+    })->name('admin.login');
 
-Route::post('/login', function () {
-    $user = User::first(); // 管理者想定ユーザー
-    Auth::login($user);
+    Route::post('/admin/login', [Admin\AuthController::class, 'login'])
+        ->name('admin.login.post');
 
-    return redirect()->route('admin.attendance.list');
-});
-
-    Route::get('/login', function () {
-        return view('auth.login');
-    })->name('login');
 
     // 管理画面（ログイン必須）
     Route::prefix('admin')
         ->name('admin.')
-        ->middleware('auth')
+        ->middleware(['auth','admin'])
         ->group(function () {
 
         Route::get('/attendance/list', [AttendanceController::class, 'index'])
