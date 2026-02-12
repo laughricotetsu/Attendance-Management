@@ -1,30 +1,51 @@
 @extends('layouts.user')
 
-@section('css')
-<link rel="stylesheet" href="{{ asset('css/attendance.css') }}">
-@endsection
-
 @section('content')
-<div class="attendance-container">
 
-    <div class="status-badge">
-        勤務外
+<div class="attendance-wrapper">
+
+    <div class="attendance-box">
+
+        {{-- ステータス --}}
+        <div class="status-badge">
+            {{ !$attendance || !$attendance->clock_in ? '勤務外' : '出勤中' }}
+        </div>
+
+        {{-- 日付 --}}
+        <div class="date">
+            {{ \Carbon\Carbon::now()->format('Y年n月j日(D)') }}
+        </div>
+
+        {{-- 時刻 --}}
+        <div class="time" id="current-time">
+            {{ \Carbon\Carbon::now()->format('H:i') }}
+        </div>
+
+        {{-- 出勤ボタン --}}
+        @if(!$attendance || !$attendance->clock_in)
+            <form method="POST" action="{{ route('attendance.start') }}">
+                @csrf
+                <button class="attendance-button">
+                    出勤
+                </button>
+            </form>
+        @endif
+
     </div>
-
-    <div class="date">
-        {{ now()->format('Y年n月j日') }}（{{ ['日','月','火','水','木','金','土'][now()->dayOfWeek] }}）
-    </div>
-
-    <div class="time">
-        {{ now()->format('H:i') }}
-    </div>
-
-    <form method="POST" action="#">
-        @csrf
-        <button class="primary-button">
-            出勤
-        </button>
-    </form>
 
 </div>
+
+<script>
+    // リアルタイム時計
+    function updateTime() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('current-time').textContent =
+            hours + ':' + minutes;
+    }
+
+    setInterval(updateTime, 1000);
+</script>
+
 @endsection

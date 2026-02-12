@@ -1,11 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\AttendanceController;
+use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
+use App\Http\Controllers\AttendanceController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 
 
 
@@ -31,9 +31,14 @@ use App\Http\Controllers\Admin\AuthController as AdminAuthController;
     Route::post('/login', [AuthController::class, 'login'])
         ->name('login.post');
 
-    Route::get('/attendance', function () {
-        return view('attendance.index');
-    })->middleware('auth')->name('attendance.index');
+    Route::middleware('auth')->group(function () {
+
+        Route::get('/attendance', [\App\Http\Controllers\AttendanceController::class, 'index'])
+            ->name('attendance.index');
+
+    Route::post('/attendance/start', [AttendanceController::class, 'startWork'])
+        ->middleware('auth')
+        ->name('attendance.start');
 
     Route::get('/attendance/list', function () {
         return view('attendance.list');
@@ -85,3 +90,4 @@ use App\Http\Controllers\Admin\AuthController as AdminAuthController;
             return view('admin.stamp_correction_request.approve', compact('id'));
         });
     });
+});
