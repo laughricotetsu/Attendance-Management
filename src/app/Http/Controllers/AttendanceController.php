@@ -8,6 +8,7 @@ use Carbon\Carbon;
 
 class AttendanceController extends Controller
 {
+
     public function index()
     {
         $today = Carbon::today();

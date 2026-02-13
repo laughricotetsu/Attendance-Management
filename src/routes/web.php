@@ -40,6 +40,13 @@ use App\Http\Controllers\AuthController;
         ->middleware('auth')
         ->name('attendance.start');
 
+    Route::post('/attendance/finish', [AttendanceController::class, 'finish'])
+    ->name('attendance.finish');
+
+    Route::post('/attendance/break/start', [AttendanceController::class, 'startBreak'])
+        ->name('attendance.break.start');
+
+
     Route::get('/attendance/list', function () {
         return view('attendance.list');
     });
