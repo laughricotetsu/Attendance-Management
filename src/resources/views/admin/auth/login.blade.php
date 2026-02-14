@@ -9,7 +9,7 @@
     <div class="admin-login-card">
         <div class="admin-login-title">管理者ログイン</div>
 
-        <form method="POST" action="{{ route('admin.login') }}" class="admin-login-form">
+        <form method="POST" action="{{ route('admin.login.post') }}" class="admin-login-form">
             @csrf
 
             <div>

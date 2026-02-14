@@ -8,19 +8,24 @@ use App\Http\Controllers\Controller;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
-    {
-        if (Auth::attempt($request->only('email', 'password'))) {
+public function login(Request $request)
+{
+    $credentials = $request->only('email', 'password');
 
-            // adminだけ通す
-            if (auth()->user()->role !== 'admin') {
-                Auth::logout();
-                return back()->withErrors(['email' => '管理者ではありません']);
-            }
+    if (Auth::attempt($credentials)) {
 
-            return redirect('/admin/attendance/list');
+        // セッション再生成（超重要）
+        $request->session()->regenerate();
+
+        // adminだけ通す
+        if (auth()->user()->role !== 'admin') {
+            Auth::logout();
+            return back()->withErrors(['email' => '管理者ではありません']);
         }
 
-        return back()->withErrors(['email' => 'ログイン失敗']);
+        return redirect()->route('admin.attendance.list');
     }
+
+    return back()->withErrors(['email' => 'ログイン失敗']);
+}
 }

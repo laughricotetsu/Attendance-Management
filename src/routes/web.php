@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
@@ -24,70 +25,63 @@ use App\Http\Controllers\AuthController;
         return view('auth.register');
     });
 
-    Route::get('/login', function () {
-        return view('auth.login');
-    })->name('login');
+// ===================
+// 一般ログイン
+// ===================
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
 
-    Route::post('/login', [AuthController::class, 'login'])
-        ->name('login.post');
+Route::post('/login', [AuthController::class, 'login'])
+    ->name('login.post');
 
-    Route::middleware('auth')->group(function () {
 
-        Route::get('/attendance', [\App\Http\Controllers\AttendanceController::class, 'index'])
-            ->name('attendance.index');
+// ===================
+// 管理者ログイン（authの外）
+// ===================
+Route::get('/admin/login', function () {
+    return view('admin.auth.login');
+})->name('admin.login');
+
+Route::post('/admin/login', [AdminAuthController::class, 'login'])
+    ->name('admin.login.post');
+
+
+// ===================
+// 一般ユーザー（auth必須）
+// ===================
+Route::middleware('auth')->group(function () {
+
+    Route::get('/attendance', [AttendanceController::class, 'index'])
+        ->name('attendance.index');
 
     Route::post('/attendance/start', [AttendanceController::class, 'startWork'])
-        ->middleware('auth')
         ->name('attendance.start');
 
     Route::post('/attendance/finish', [AttendanceController::class, 'finish'])
-    ->name('attendance.finish');
+        ->name('attendance.finish');
 
     Route::post('/attendance/break/start', [AttendanceController::class, 'startBreak'])
         ->name('attendance.break.start');
+});
 
 
-    Route::get('/attendance/list', function () {
-        return view('attendance.list');
-    });
+// ===================
+// 管理画面（auth＋admin必須）
+// ===================
+Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['auth','admin'])
+    ->group(function () {
 
-    Route::get('/attendance/detail/{id}', function () {
-        return view('attendance.detail');
-    });
-
-    Route::get('/stamp_correction_request/list', function () {
-        return view('stamp_correction_request.list');
-    });
-
-    Route::post(
-        '/attendance/{attendance}/request',
-        [AttendanceController::class, 'requestCorrection']
-    )->name('attendance.request');
-
-
-    Route::get('/admin/login', function () {
-        return view('admin.auth.login');
-    })->name('admin.login');
-
-    Route::post('/admin/login', [Admin\AuthController::class, 'login'])
-        ->name('admin.login.post');
-
-
-    // 管理画面（ログイン必須）
-    Route::prefix('admin')
-        ->name('admin.')
-        ->middleware(['auth','admin'])
-        ->group(function () {
-
-        Route::get('/attendance/list', [AttendanceController::class, 'index'])
+        Route::get('/attendance/list', [AdminAttendanceController::class, 'index'])
             ->name('attendance.list');
 
-        Route::get('/attendance/{attendance}', [AttendanceController::class, 'show'])
+        Route::get('/attendance/{attendance}', [AdminAttendanceController::class, 'show'])
             ->name('attendance.detail');
 
-        Route::put('/attendance/{attendance}', [AttendanceController::class, 'update'])
+        Route::put('/attendance/{attendance}', [AdminAttendanceController::class, 'update'])
             ->name('attendance.update');
-
 
         Route::get('/staff/list', function () {
             return view('admin.staff.list');
@@ -96,5 +90,4 @@ use App\Http\Controllers\AuthController;
         Route::get('/stamp_correction_request/approve/{id}', function ($id) {
             return view('admin.stamp_correction_request.approve', compact('id'));
         });
-    });
 });
