@@ -13,12 +13,29 @@ class BreakTime extends Model
 
         protected $fillable = [
             'attendance_id',
-            'start_time',
-            'end_time',
+            'break_start',
+            'break_end',
         ];
 
         public function attendance()
         {
             return $this->belongsTo(Attendance::class);
         }
+
+        public function startBreak()
+        {
+            $attendance = Attendance::where('user_id', auth()->id())
+                ->whereDate('work_date', today())
+                ->first();
+
+            if ($attendance) {
+                BreakTime::create([
+                    'attendance_id' => $attendance->id,
+                    'start_time' => now(),
+                ]);
+            }
+
+            return redirect()->route('attendance.index');
+        }
+
     }

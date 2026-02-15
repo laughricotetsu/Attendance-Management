@@ -13,7 +13,7 @@
 
         {{-- 日付 --}}
         <div class="attendance-date">
-            {{ \Carbon\Carbon::now()->format('Y年n月j日(D)') }}
+            {{ \Carbon\Carbon::now()->isoFormat('Y年M月D日(ddd)') }}
         </div>
 
         {{-- 時刻 --}}
@@ -52,6 +52,21 @@
             </div>
 
         @endif
+
+        <div class="attendance-status">
+            @if ($status === 'break')
+                <span class="status-badge">休憩中</span>
+            @endif
+        </div>
+        @if ($status === 'break')
+            <form method="POST" action="{{ route('attendance.break.end') }}">
+                @csrf
+                <button class="attendance-button white-button">
+                    休憩戻
+                </button>
+            </form>
+        @endif
+
 
     </div>
 
