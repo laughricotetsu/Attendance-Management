@@ -179,4 +179,11 @@ body {
     display: flex;
     justify-content: center;
     gap: 20px;
+    /* ボタン間の余白 */
+    margin-top: 30px;
+}
+
+.message {
+    margin-top: 30px;
+    font-size: 18px;
 }

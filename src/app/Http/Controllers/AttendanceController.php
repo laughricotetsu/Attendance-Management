@@ -13,25 +13,22 @@ class AttendanceController extends Controller
 
     public function index()
     {
-
-        $today = Carbon::today();
-
         $attendance = Attendance::where('user_id', auth()->id())
-            ->whereDate('work_date', $today)
+            ->whereDate('work_date', today())
             ->first();
 
-        $status = 'off'; // 勤務外
+        $status = 'off';
 
-        if ($attendance) {
-
-            if ($attendance->end_time) {
-                $status = 'finished';
-            } elseif ($attendance->break_start && !$attendance->break_end) {
-                $status = 'break';
-            } else {
-                $status = 'working';
-            }
+        if (!$attendance || !$attendance->clock_in) {
+            $status = 'off';
+        } elseif ($attendance->clock_out) {
+            $status = 'finished';
+        } elseif ($attendance->breaks()->whereNull('break_end')->exists()) {
+            $status = 'break';
+        } else {
+            $status = 'working';
         }
+
 
         return view('attendance.index', compact('attendance', 'status'));
     }
@@ -73,4 +70,43 @@ class AttendanceController extends Controller
 
         return redirect()->route('attendance.index');
     }
+
+    public function endBreak()
+    {
+        $attendance = Attendance::where('user_id', auth()->id())
+            ->whereDate('work_date', today())
+            ->first();
+
+        if ($attendance) {
+
+            $latestBreak = BreakTime::where('attendance_id', $attendance->id)
+                ->whereNull('break_end')
+                ->latest()
+                ->first();
+
+            if ($latestBreak) {
+                $latestBreak->break_end = now();
+                $latestBreak->save();
+            }
+        }
+
+        return redirect()->route('attendance.index');
+    }
+
+    public function finish()
+    {
+        $attendance = Attendance::where('user_id', auth()->id())
+            ->whereDate('created_at', today())
+            ->first();
+
+        if ($attendance && !$attendance->clock_out) {
+            $attendance->update([
+                'clock_out' => now()
+            ]);
+        }
+
+        return redirect()->route('attendance.index');
+    }
+
+
 }

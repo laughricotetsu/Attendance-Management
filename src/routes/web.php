@@ -63,6 +63,10 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/attendance/break/start', [AttendanceController::class, 'startBreak'])
         ->name('attendance.break.start');
+
+        Route::post('/attendance/break/end', [AttendanceController::class, 'endBreak'])
+        ->name('attendance.break.end');
+
 });
 
 
