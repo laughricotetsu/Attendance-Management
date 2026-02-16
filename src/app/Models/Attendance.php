@@ -39,11 +39,21 @@ class Attendance extends Model
 
         public function getTotalBreakTimeAttribute()
         {
-            $seconds = $this->breaks->sum(function ($break) {
-                return strtotime($break->break_end) - strtotime($break->break_start);
-            });
+            $totalSeconds = 0;
 
-            return gmdate('H:i', $seconds);
+            foreach ($this->breaks as $break) {
+                if ($break->break_start && $break->break_end) {
+                    $start = strtotime($break->break_start);
+                    $end   = strtotime($break->break_end);
+
+                    $totalSeconds += ($end - $start);
+                }
+            }
+
+            $hours = floor($totalSeconds / 3600);
+            $minutes = floor(($totalSeconds % 3600) / 60);
+
+            return sprintf('%02d:%02d', $hours, $minutes);
         }
 
         public function getWorkTimeAttribute()

@@ -11,15 +11,44 @@ class AttendanceController extends Controller
 {
     public function index()
     {
-            if (auth()->user()->role !== 'admin') {
-        abort(403);
+        if (auth()->user()->role !== 'admin') {
+            abort(403);
         }
 
-
-        // 勤怠 + ユーザーを一緒に取得
-        $attendances = Attendance::with('user')
+        $attendances = Attendance::with(['user', 'breaks'])
             ->orderBy('work_date', 'desc')
             ->get();
+
+            foreach ($attendances as $attendance) {
+
+            if ($attendance->clock_in && $attendance->clock_out) {
+
+                $workSeconds = strtotime($attendance->clock_out) - strtotime($attendance->clock_in);
+
+                $breakSeconds = 0;
+
+                foreach ($attendance->breaks as $break) {
+
+                    if ($break->break_start && $break->break_end) {
+
+                        $start = strtotime($attendance->work_date . ' ' . $break->break_start);
+                        $end   = strtotime($attendance->work_date . ' ' . $break->break_end);
+
+                        $breakSeconds += ($end - $start);
+                    }
+                }
+
+                $attendance->break_duration = gmdate('H:i', $breakSeconds);
+
+                $totalSeconds = $workSeconds - $breakSeconds;
+
+                $attendance->work_duration = gmdate('H:i', $totalSeconds);
+
+            } else {
+                $attendance->work_duration = '-';
+                $attendance->break_duration = '-';
+            }
+        }
 
         return view('admin.attendance.list', compact('attendances'));
     }
@@ -32,15 +61,47 @@ class AttendanceController extends Controller
     }
     public function update(Request $request, Attendance $attendance)
     {
+
         $user = auth()->user();
 
         if ($user->role === 'admin') {
-            // 管理者：直接修正
+
             $attendance->update([
                 'clock_in'  => $request->clock_in,
                 'clock_out' => $request->clock_out,
                 'note'      => $request->note,
             ]);
+
+            // 🔥 休憩も更新
+            if ($request->has('breaks')) {
+
+                foreach ($attendance->breaks as $index => $break) {
+
+                    if (isset($request->breaks[$index])) {
+
+                        $break->update([
+                            'break_start' => $request->breaks[$index]['break_start'],
+                            'break_end'   => $request->breaks[$index]['break_end'],
+                        ]);
+                    }
+                }
+            }
+
+            if ($request->breaks) {
+                foreach ($request->breaks as $breakId => $breakData) {
+
+                    $break = \App\Models\BreakTime::find($breakId);
+
+                    if ($break) {
+                        $break->update([
+                            'break_start' => $breakData['break_start'],
+                            'break_end'   => $breakData['break_end'],
+                        ]);
+                    }
+                }
+            }
+
+            
 
             return redirect()
                 ->route('admin.attendance.detail', $attendance->id)

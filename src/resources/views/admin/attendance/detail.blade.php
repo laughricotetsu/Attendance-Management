@@ -36,18 +36,37 @@
                 <input type="time" name="clock_out" value="{{ optional($attendance->clock_out)->format('H:i') }}">
             </div>
         </div>
-
         {{-- 休憩 --}}
-        @foreach ($attendance->breaks as $index => $break)
+        @foreach ($attendance->breaks as $break)
             <div class="row">
-                <div class="label">休憩{{ $index + 1 }}</div>
+                <div class="label">休憩</div>
                 <div class="value time-range">
-                    <input type="time" value="{{ optional($break->break_start)->format('H:i') }}">
+
+                    <input type="time"
+                        name="breaks[{{ $break->id }}][break_start]"
+                        value="{{ $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '' }}">
+
                     <span>〜</span>
-                    <input type="time" value="{{ optional($break->break_end)->format('H:i') }}">
+
+                    <input type="time"
+                        name="breaks[{{ $break->id }}][break_end]"
+                        value="{{ $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '' }}">
+
                 </div>
             </div>
         @endforeach
+
+@if($attendance->breaks->isEmpty())
+    <div class="row">
+        <div class="label">休憩</div>
+        <div class="value time-range">
+            <input type="time" name="new_break[break_start]">
+            <span>〜</span>
+            <input type="time" name="new_break[break_end]">
+        </div>
+    </div>
+@endif
+
 
         {{-- 追加用の空休憩 --}}
         <div class="row">

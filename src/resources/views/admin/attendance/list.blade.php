@@ -12,8 +12,8 @@
                 <th>日付</th>
                 <th>出勤</th>
                 <th>退勤</th>
-                <th>ステータス</th>
-                <th>詳細</th>
+                <th>休憩</th>
+                <th>合計</th>
             </tr>
         </thead>
 
@@ -24,8 +24,8 @@
             <td>{{ $attendance->work_date }}</td>
             <td>{{ $attendance->clock_in }}</td>
             <td>{{ $attendance->clock_out }}</td>
-            <td>{{ $attendance->total_break_time }}</td>
-            <td>{{ $attendance->work_time }}</td>
+            <td>{{ $attendance->break_duration }}</td>
+            <td>{{ $attendance->work_duration }}</td>
         <td>
                 <a href="{{ route('admin.attendance.detail', $attendance->id) }}">
                     詳細
