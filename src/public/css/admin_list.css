@@ -1,0 +1,117 @@
+.attendance-wrapper {
+    max-width: 900px;
+    margin: 50px auto;
+    text-align: left;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.bar {
+    font-weight: 900;
+    font-size: 26px;
+    margin-right: 12px;
+}
+
+.date-nav {
+    width: 500px;
+    margin: 0 auto 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-link {
+    font-size: 14px;
+    color: #666;
+    text-decoration: none;
+}
+
+.date-box {
+    background: #f3f3f3;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-btn {
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+}
+
+.table-card {
+    width: 700px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    padding: 20px 30px;
+    border-radius: 8px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #f7f7f7;
+}
+
+th {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 14px 0;
+}
+
+td {
+    font-size: 14px;
+    padding: 12px 0;
+}
+
+tbody tr:hover {
+    background: #fafafa;
+    height: 48px;
+}
+
+tbody td {
+    height: 50px;
+}
+
+.detail-link {
+    font-weight: 700;
+    color: #000;
+}
+
+.date-nav-wrapper {
+    width: 600px;
+    margin: 0 auto 40px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px 30px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.date-center {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+a {
+    color: #000;
+    text-decoration: none;
+    font-weight: 600;
+}

@@ -4,53 +4,23 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 
 class AttendanceController extends Controller
-{
-    public function index()
     {
-        if (auth()->user()->role !== 'admin') {
-            abort(403);
-        }
 
-        $attendances = Attendance::with(['user', 'breaks'])
-            ->orderBy('work_date', 'desc')
-            ->get();
+    public function index(Request $request)
+    {
+        $date = $request->date ?? now()->toDateString();
 
-            foreach ($attendances as $attendance) {
+        $users = User::with(['attendances' => function ($query) use ($date) {
+            $query->whereDate('work_date', $date)
+                ->with('breaks');
+        }])->get();
 
-            if ($attendance->clock_in && $attendance->clock_out) {
-
-                $workSeconds = strtotime($attendance->clock_out) - strtotime($attendance->clock_in);
-
-                $breakSeconds = 0;
-
-                foreach ($attendance->breaks as $break) {
-
-                    if ($break->break_start && $break->break_end) {
-
-                        $start = strtotime($attendance->work_date . ' ' . $break->break_start);
-                        $end   = strtotime($attendance->work_date . ' ' . $break->break_end);
-
-                        $breakSeconds += ($end - $start);
-                    }
-                }
-
-                $attendance->break_duration = gmdate('H:i', $breakSeconds);
-
-                $totalSeconds = $workSeconds - $breakSeconds;
-
-                $attendance->work_duration = gmdate('H:i', $totalSeconds);
-
-            } else {
-                $attendance->work_duration = '-';
-                $attendance->break_duration = '-';
-            }
-        }
-
-        return view('admin.attendance.list', compact('attendances'));
+        return view('admin.attendance.list', compact('users', 'date'));
     }
 
     public function show(Attendance $attendance)
@@ -72,21 +42,7 @@ class AttendanceController extends Controller
                 'note'      => $request->note,
             ]);
 
-            // 🔥 休憩も更新
-            if ($request->has('breaks')) {
-
-                foreach ($attendance->breaks as $index => $break) {
-
-                    if (isset($request->breaks[$index])) {
-
-                        $break->update([
-                            'break_start' => $request->breaks[$index]['break_start'],
-                            'break_end'   => $request->breaks[$index]['break_end'],
-                        ]);
-                    }
-                }
-            }
-
+            // 既存break更新
             if ($request->breaks) {
                 foreach ($request->breaks as $breakId => $breakData) {
 
@@ -101,7 +57,18 @@ class AttendanceController extends Controller
                 }
             }
 
-            
+            // 🔥 新規break追加
+            if (
+                isset($request->new_break['break_start']) &&
+                isset($request->new_break['break_end']) &&
+                $request->new_break['break_start'] &&
+                $request->new_break['break_end']
+            ) {
+                $attendance->breaks()->create([
+                    'break_start' => $request->new_break['break_start'],
+                    'break_end'   => $request->new_break['break_end'],
+                ]);
+            }
 
             return redirect()
                 ->route('admin.attendance.detail', $attendance->id)

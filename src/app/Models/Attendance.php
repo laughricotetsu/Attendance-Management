@@ -81,17 +81,20 @@ class Attendance extends Model
         public function getWorkDurationAttribute()
         {
             if (!$this->clock_in || !$this->clock_out) {
-                return null;
+                return '-';
             }
 
             $workMinutes = Carbon::parse($this->clock_in)
                 ->diffInMinutes(Carbon::parse($this->clock_out));
 
             $breakMinutes = $this->breaks->sum(function ($break) {
+
                 if ($break->break_start && $break->break_end) {
-                    return Carbon::parse($break->break_start)
-                        ->diffInMinutes(Carbon::parse($break->break_end));
+
+                    return Carbon::parse($this->work_date . ' ' . $break->break_start)
+                        ->diffInMinutes(Carbon::parse($this->work_date . ' ' . $break->break_end));
                 }
+
                 return 0;
             });
 
@@ -103,6 +106,34 @@ class Attendance extends Model
             return sprintf('%02d:%02d', $hours, $minutes);
         }
 
+        public function getBreakDurationAttribute()
+        {
+            if ($this->breaks->isEmpty()) {
+                return '-';
+            }
+
+            $breakMinutes = $this->breaks->sum(function ($break) {
+
+                if ($break->break_start && $break->break_end) {
+
+                    return \Carbon\Carbon::parse($this->work_date . ' ' . $break->break_start)
+                        ->diffInMinutes(
+                            \Carbon\Carbon::parse($this->work_date . ' ' . $break->break_end)
+                        );
+                }
+
+                return 0;
+            });
+
+            if ($breakMinutes === 0) {
+                return '00:00';
+            }
+
+            $hours = floor($breakMinutes / 60);
+            $minutes = $breakMinutes % 60;
+
+            return sprintf('%02d:%02d', $hours, $minutes);
+        }
 
 
     }

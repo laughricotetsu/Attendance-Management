@@ -37,6 +37,8 @@
             </div>
         </div>
         {{-- 休憩 --}}
+
+
         @foreach ($attendance->breaks as $break)
             <div class="row">
                 <div class="label">休憩</div>
