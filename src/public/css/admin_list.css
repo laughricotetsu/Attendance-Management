@@ -1,7 +1,6 @@
-.attendance-wrapper {
-    max-width: 900px;
+.attendance-container {
+    width: 900px;
     margin: 50px auto;
-    text-align: left;
 }
 
 .page-title {
@@ -48,7 +47,7 @@
 }
 
 .table-card {
-    width: 700px;
+    width: 900px;
     margin: 0 auto;
     background: #fff;
     border-radius: 10px;
@@ -60,21 +59,33 @@
 table {
     width: 100%;
     border-collapse: collapse;
+    margin: 0;
+}
+
+thead tr {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+tbody tr {
+    border-bottom: 1px solid #e5e5e5;
 }
 
 thead {
-    background: #f7f7f7;
+    background: #ffffff;
 }
 
 th {
-    font-size: 13px;
-    font-weight: 600;
-    padding: 14px 0;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 18px 20px;
+    text-align: left;
+    color: #777;
 }
 
 td {
     font-size: 14px;
-    padding: 12px 0;
+    padding: 18px 20px;
+    text-align: left;
 }
 
 tbody tr:hover {
@@ -86,14 +97,17 @@ tbody td {
     height: 50px;
 }
 
+tbody tr:last-child {
+    border-bottom: none;
+}
+
 .detail-link {
     font-weight: 700;
     color: #000;
 }
 
 .date-nav-wrapper {
-    width: 600px;
-    margin: 0 auto 40px;
+    width: 100%;
     background: #fff;
     border-radius: 8px;
     padding: 12px 30px;
@@ -103,10 +117,11 @@ tbody td {
     align-items: center;
 
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 40px;
 }
 
 .date-center {
-    font-weight: 600;
+    font-weight: 900;
     font-size: 14px;
 }
 

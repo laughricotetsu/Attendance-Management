@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 
 class AttendanceController extends Controller
@@ -13,14 +14,25 @@ class AttendanceController extends Controller
 
     public function index(Request $request)
     {
-        $date = $request->date ?? now()->toDateString();
+        $date = $request->date
+            ? Carbon::parse($request->date)
+            : Carbon::today();
 
+        $prevDate = $date->copy()->subDay()->format('Y-m-d');
+        $nextDate = $date->copy()->addDay()->format('Y-m-d');
+
+        // 全ユーザー取得 + その日の勤怠だけ取得
         $users = User::with(['attendances' => function ($query) use ($date) {
             $query->whereDate('work_date', $date)
                 ->with('breaks');
         }])->get();
 
-        return view('admin.attendance.list', compact('users', 'date'));
+        return view('admin.attendance.list', compact(
+            'users',
+            'date',
+            'prevDate',
+            'nextDate'
+        ));
     }
 
     public function show(Attendance $attendance)

@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-<div class="attendance-wrapper">
+<div class="attendance-container">
 
     <h1 class="page-title">
         <span class="bar">|</span>
@@ -13,14 +13,19 @@
     </h1>
 
     <div class="date-nav-wrapper">
-        <a href="#" class="nav-link">← 前日</a>
+
+        <a href="{{ route('admin.attendance.list', ['date' => $prevDate]) }}" class="nav-link">
+            ← 前日
+        </a>
 
         <div class="date-center">
-            <span class="calendar-icon">📅</span>
-            {{ \Carbon\Carbon::parse($date)->format('Y/m/d') }}
+            {{ \Carbon\Carbon::parse($date)->format('Y年n月j日') }}
         </div>
 
-        <a href="#" class="nav-link">翌日 →</a>
+        <a href="{{ route('admin.attendance.list', ['date' => $nextDate]) }}" class="nav-link">
+            翌日 →
+        </a>
+
     </div>
 
     <div class="table-card">
