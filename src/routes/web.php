@@ -23,7 +23,7 @@ use App\Http\Controllers\AuthController;
 
     Route::get('/register', function () {
         return view('auth.register');
-    });
+    })->name('register');
 
 // ===================
 // 一般ログイン

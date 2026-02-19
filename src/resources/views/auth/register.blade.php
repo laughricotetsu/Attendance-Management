@@ -1,7 +1,47 @@
 @extends('layouts.guest')
 
-@section('title', '会員登録')
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/register.css') }}">
+@endsection
 
 @section('content')
-    <h1>会員登録</h1>
+<div class="auth-wrapper">
+
+    <div class="auth-card">
+        <h2 class="auth-title">会員登録</h2>
+
+        <form method="POST" action="{{ route('register') }}">
+            @csrf
+
+            <div class="form-group">
+                <label>名前</label>
+                <input type="text" name="name">
+            </div>
+
+            <div class="form-group">
+                <label>メールアドレス</label>
+                <input type="email" name="email">
+            </div>
+
+            <div class="form-group">
+                <label>パスワード</label>
+                <input type="password" name="password">
+            </div>
+
+            <div class="form-group">
+                <label>パスワード確認</label>
+                <input type="password" name="password_confirmation">
+            </div>
+
+            <button type="submit" class="auth-button">
+                登録する
+            </button>
+
+            <div class="auth-link">
+                <a href="{{ route('login') }}">ログインはこちら</a>
+            </div>
+
+        </form>
+    </div>
+</div>
 @endsection
