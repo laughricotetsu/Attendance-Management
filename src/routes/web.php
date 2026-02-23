@@ -52,6 +52,7 @@ Route::post('/admin/login', [AdminAuthController::class, 'login'])
 // ===================
 Route::middleware('auth')->group(function () {
 
+
     Route::get('/attendance', [AttendanceController::class, 'index'])
         ->name('attendance.index');
 

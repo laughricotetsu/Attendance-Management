@@ -14,6 +14,9 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Contracts\LogoutResponse;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\LoginRequest;
+
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -34,6 +37,10 @@ class FortifyServiceProvider extends ServiceProvider
             return view('auth.register');
         });
 
+        {
+        Fortify::createUsersUsing(CreateNewUser::class);
+            }
+
         Fortify::loginView(function () {
             return view('auth.login');
         });
@@ -45,7 +52,21 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(LogoutResponse::class, CustomLogoutResponse::class);
+
+        Fortify::authenticateUsing(function ($request) {
+
+            $loginRequest = LoginRequest::createFrom($request);
+
+            $loginRequest->setContainer(app())->setRedirector(app('redirect'));
+
+            $loginRequest->validateResolved();
+
+            if (Auth::attempt($loginRequest->only('email', 'password'))) {
+                return Auth::user();
+            }
+
+            return null;
+        });
     }
 
-    
 }

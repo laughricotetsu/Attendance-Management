@@ -12,17 +12,23 @@
 
         <h1 class="login-title">ログイン</h1>
 
-        <form method="POST" action="{{ route('login') }}">
+        <form method="POST" action="{{ route('login') }}" novalidate>
             @csrf
 
             <div class="form-group">
                 <label>メールアドレス</label>
                 <input type="email" name="email" required>
+                @error('email')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
             </div>
 
             <div class="form-group">
                 <label>パスワード</label>
                 <input type="password" name="password" required>
+                @error('password')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
             </div>
 
             <button type="submit" class="login-button">
@@ -30,7 +36,7 @@
             </button>
 
             <div class="register-link">
-                <a href="#">会員登録はこちら</a>
+                <a href="{{ route('register') }}">会員登録はこちら</a>
             </div>
 
         </form>
