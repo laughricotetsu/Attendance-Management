@@ -6,7 +6,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\AuthController;
+// use App\Http\Controllers\AuthController;
 
 
 
@@ -25,15 +25,6 @@ use App\Http\Controllers\AuthController;
         return view('auth.register');
     })->name('register');
 
-// ===================
-// 一般ログイン
-// ===================
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-
-Route::post('/login', [AuthController::class, 'login'])
-    ->name('login.post');
 
 
 // ===================

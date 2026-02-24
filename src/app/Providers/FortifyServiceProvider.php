@@ -31,7 +31,7 @@ class FortifyServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    public function boot()
     {
         Fortify::registerView(function () {
             return view('auth.register');
@@ -55,18 +55,18 @@ class FortifyServiceProvider extends ServiceProvider
 
         Fortify::authenticateUsing(function ($request) {
 
-            $loginRequest = LoginRequest::createFrom($request);
+            app(\App\Http\Requests\LoginRequest::class)
+                ->setContainer(app())
+                ->setRedirector(app('redirect'))
+                ->validateResolved();
 
-            $loginRequest->setContainer(app())->setRedirector(app('redirect'));
-
-            $loginRequest->validateResolved();
-
-            if (Auth::attempt($loginRequest->only('email', 'password'))) {
-                return Auth::user();
+            if (\Auth::attempt($request->only('email', 'password'))) {
+                return \Auth::user();
             }
 
             return null;
         });
+
     }
 
 }
