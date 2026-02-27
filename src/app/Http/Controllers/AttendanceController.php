@@ -108,5 +108,24 @@ class AttendanceController extends Controller
         return redirect()->route('attendance.index');
     }
 
+    public function list(Request $request)
+    {
+        // 月を取得（なければ今月）
+        $currentMonth = $request->month
+            ? Carbon::parse($request->month)
+            : Carbon::now();
+
+        // 月の最初と最後
+        $startOfMonth = $currentMonth->copy()->startOfMonth();
+        $endOfMonth   = $currentMonth->copy()->endOfMonth();
+
+        // その月の勤怠取得
+        $attendances = Attendance::where('user_id', auth()->id())
+            ->whereBetween('work_date', [$startOfMonth, $endOfMonth])
+            ->orderBy('work_date', 'desc')
+            ->get();
+
+        return view('attendance.list', compact('attendances', 'currentMonth'));
+    }
 
 }

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>@yield('title')</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/user_list.css') }}">
 </head>
 <body>
 
@@ -15,7 +16,7 @@
         {{-- ナビ --}}
         <nav class="nav">
             <a href="#">勤怠</a>
-            <a href="#">勤怠一覧</a>
+            <a href="{{ route('attendance.list') }}">勤怠一覧</a>
             <a href="#">申請</a>
 
             <form method="POST" action="{{ route('logout') }}">
