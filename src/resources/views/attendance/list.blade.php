@@ -3,24 +3,25 @@
 @section('content')
 <div class="attendance-container">
 
+    <h1 class="page-title">
+        <span class="bar">|</span>勤怠一覧</h1>
 
-<div class="attendance-card">
-        <h1 class="page-title">
-            <span class="bar">|</span>勤怠一覧</h1>
 
-    <div class="month-nav">
-            <a href="{{ route('attendance.list', ['month' => $currentMonth->copy()->subMonth()->format('Y-m')]) }}" class="arrow">
-                ←
-            </a>
+        <div class="month-nav-wrapper">
+                <a href="{{ route('attendance.list', ['month' => $currentMonth->copy()->subMonth()->format('Y-m')]) }}" class="arrow">
+                    ←
+                </a>
 
-            <div class="month-label">
-                {{ $currentMonth->format('Y年n月') }}
-            </div>
+                <div class="month-label">
+                    {{ $currentMonth->format('Y年n月') }}
+                </div>
 
-            <a href="{{ route('attendance.list', ['month' => $currentMonth->copy()->addMonth()->format('Y-m')]) }}" class="arrow">
-                →
-            </a>
-    </div>
+                <a href="{{ route('attendance.list', ['month' => $currentMonth->copy()->addMonth()->format('Y-m')]) }}" class="arrow">
+                    →
+                </a>
+        </div>
+
+    <div class="attendance-card">
 
         <table class="attendance-table">
             <thead>

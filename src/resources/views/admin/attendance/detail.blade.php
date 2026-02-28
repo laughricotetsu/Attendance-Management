@@ -84,7 +84,7 @@
         <div class="row">
             <div class="label">備考</div>
             <div class="value">
-                <input type="text" name="note" value="{{ $attendance->note ?? '' }}">
+                <!-- <input type="text" name="note" value="{{ $attendance->note ?? '' }}"> -->
             </div>
         </div>
     </div>

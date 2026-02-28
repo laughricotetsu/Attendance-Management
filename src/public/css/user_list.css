@@ -1,13 +1,13 @@
 /* 全体背景 */
 .attendance-container {
-    background-color: #f5f5f5;
-    min-height: 100vh;
-    padding: 80px 0;
+    background-color: #f3f3f3;
+    width: 900px;
+    margin: 50px auto;
 }
 
 /* 中央カード */
 .attendance-card {
-    width: 80%;
+    width: 90%;
     max-width: 900px;
     margin: 60px auto;
     background-color: #fff;
@@ -17,9 +17,15 @@
 }
 /* タイトル */
 .page-title {
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 40px;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.bar {
+    font-weight: 900;
+    font-size: 26px;
+    margin-right: 12px;
 }
 
 /* テーブル */
@@ -52,10 +58,6 @@
     border-radius: 4px;
 }
 
-/* .detail-link:hover {
-    opacity: 0.6;
-} */
-
 .attendance-title {
     font-size: 24px;
     font-weight: bold;
@@ -63,12 +65,6 @@
     border-left: 4px solid black;
 }
 
-.attendance-card {
-    background: white;
-    border-radius: 10px;
-    padding: 40px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-}
 
 .month-navigation {
     display: flex;
@@ -99,6 +95,18 @@
     padding: 60px 80px;
 }
 
+
+.month-box {
+    background: #f3f3f3;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .arrow {
     text-decoration: none;
     font-size: 22px;
@@ -113,4 +121,20 @@
 .month-label {
     font-size: 22px;
     font-weight: bold;
+}
+
+.month-nav-wrapper {
+    width: 95%;
+    max-width: 900px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px 30px;
+    margin: 60px auto;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 40px;
 }

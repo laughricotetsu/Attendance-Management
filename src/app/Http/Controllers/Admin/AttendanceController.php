@@ -51,7 +51,6 @@ class AttendanceController extends Controller
             $attendance->update([
                 'clock_in'  => $request->clock_in,
                 'clock_out' => $request->clock_out,
-                'note'      => $request->note,
             ]);
 
             // 既存break更新
@@ -143,16 +142,16 @@ class AttendanceController extends Controller
             ]);
         }
 
-        // ③ 備考
-        if ($attendance->note !== $request->note) {
-            AttendanceCorrectionRequestDetail::create([
-                'request_id'  => $correctionRequest->id,
-                'target_type' => 'note',
-                'target_id'   => $attendance->id,
-                'before_value'=> $attendance->note,
-                'after_value' => $request->note,
-            ]);
-        }
+        // // ③ 備考
+        // if ($attendance->note !== $request->note) {
+        //     AttendanceCorrectionRequestDetail::create([
+        //         'request_id'  => $correctionRequest->id,
+        //         'target_type' => 'note',
+        //         'target_id'   => $attendance->id,
+        //         'before_value'=> $attendance->note,
+        //         'after_value' => $request->note,
+        //     ]);
+        // }
 
         return redirect()
             ->route('admin.attendance.detail', $attendance->id)

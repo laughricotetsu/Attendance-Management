@@ -96,12 +96,13 @@ class AttendanceController extends Controller
     public function finish()
     {
         $attendance = Attendance::where('user_id', auth()->id())
-            ->whereDate('created_at', today())
+            ->whereDate('work_date', today())
             ->first();
 
         if ($attendance && !$attendance->clock_out) {
             $attendance->update([
-                'clock_out' => now()
+                'clock_out' => now(),
+                'status' => 'finished'
             ]);
         }
 
