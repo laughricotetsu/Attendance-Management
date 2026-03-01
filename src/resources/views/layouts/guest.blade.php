@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>@yield('title')</title>
     <link rel="stylesheet" href="{{ asset('css/common.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/verify-email.css') }}">
     @yield('css')
 </head>
 <body>

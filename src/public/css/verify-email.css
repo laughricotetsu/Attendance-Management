@@ -1,0 +1,75 @@
+/* 背景 */
+.verify-wrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f3f4f6;
+}
+
+/* カード */
+.verify-card {
+    width: 420px;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+/* タイトル */
+.verify-title {
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #111827;
+}
+
+/* 説明文 */
+.verify-text {
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+/* 成功メッセージ */
+.verify-success {
+    background: #ecfdf5;
+    color: #065f46;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+/* メインボタン */
+.verify-button {
+    width: 100%;
+    padding: 12px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.verify-button:hover {
+    background: #1d4ed8;
+}
+
+/* ログアウト */
+.verify-logout {
+    margin-top: 20px;
+}
+
+.verify-logout button {
+    background: none;
+    border: none;
+    color: #6b7280;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: underline;
+}

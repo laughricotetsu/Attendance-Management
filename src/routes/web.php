@@ -41,8 +41,7 @@ Route::post('/admin/login', [AdminAuthController::class, 'login'])
 // ===================
 // 一般ユーザー（auth必須）
 // ===================
-Route::middleware('auth')->group(function () {
-
+Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/attendance', [AttendanceController::class, 'index'])
         ->name('attendance.index');
@@ -63,7 +62,6 @@ Route::middleware('auth')->group(function () {
         ->name('attendance.list');
 
 });
-
 
 // ===================
 // 管理画面（auth＋admin必須）

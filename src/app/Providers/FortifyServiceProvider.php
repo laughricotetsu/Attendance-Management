@@ -16,6 +16,8 @@ use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Contracts\LogoutResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\LoginRequest;
+use Laravel\Fortify\Contracts\RegisterResponse;
+use App\Http\Responses\RegisterResponse as CustomRegisterResponse;
 
 
 class FortifyServiceProvider extends ServiceProvider
@@ -23,11 +25,10 @@ class FortifyServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
-    public function register(): void
+    public function register()
     {
-        //
+        $this->app->singleton(RegisterResponse::class, CustomRegisterResponse::class);
     }
-
     /**
      * Bootstrap any application services.
      */
@@ -66,6 +67,10 @@ class FortifyServiceProvider extends ServiceProvider
 
             return null;
         });
+
+        Fortify::verifyEmailView(function () {
+                return view('auth.verify-email');
+            });
 
     }
 
