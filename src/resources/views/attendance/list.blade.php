@@ -37,12 +37,20 @@
             <tbody>
                 @foreach($attendances as $attendance)
                 <tr>
-                    <td>{{ \Carbon\Carbon::parse($attendance->work_date)->format('m/d') }}</td>
+                    <td>@php
+                            $date = \Carbon\Carbon::parse($attendance->work_date);
+                        @endphp
+
+                        {{ $date->format('m/d') }} ({{ $date->isoFormat('ddd') }})</td>
                     <td>{{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '-' }}</td>
                     <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '-' }}</td>
                     <td>-</td>
                     <td>-</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
+                    <td><a href="{{ route('attendance.detail', $attendance->id) }}"
+                    class="detail-button">
+                        詳細
+                        </a>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>

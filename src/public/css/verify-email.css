@@ -1,75 +1,63 @@
 /* 背景 */
-.verify-wrapper {
+.verify-bg {
     min-height: 100vh;
+    background: #FFF;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f3f4f6;
 }
 
-/* カード */
-.verify-card {
-    width: 420px;
-    background: #ffffff;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+/* 白いボックス */
+.verify-box {
+    width: 1000px;
+    background: #fff;
+}
+
+/* 黒ヘッダー */
+.verify-header {
+    background: #000;
+    color: #fff;
+    padding: 20px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* 中身 */
+.verify-body {
+    padding: 100px 20px;
     text-align: center;
 }
 
-/* タイトル */
-.verify-title {
-    margin-bottom: 20px;
-    font-weight: 600;
-    color: #111827;
+/* メッセージ */
+.verify-message {
+    font-size: 16px;
+    margin-bottom: 40px;
+    line-height: 1.8;
 }
 
-/* 説明文 */
-.verify-text {
-    font-size: 14px;
-    color: #4b5563;
-    line-height: 1.6;
-    margin-bottom: 30px;
-}
-
-/* 成功メッセージ */
-.verify-success {
-    background: #ecfdf5;
-    color: #065f46;
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-size: 13px;
-}
-
-/* メインボタン */
+/* グレーボタン */
 .verify-button {
-    width: 100%;
-    padding: 12px;
-    background: #2563eb;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
+    padding: 12px 35px;
+    background: #e5e5e5;
+    border: 1px solid #999;
+    border-radius: 4px;
     cursor: pointer;
-    transition: 0.2s;
+    margin-bottom: 25px;
 }
 
 .verify-button:hover {
-    background: #1d4ed8;
+    background: #d4d4d4;
 }
 
-/* ログアウト */
-.verify-logout {
-    margin-top: 20px;
-}
-
-.verify-logout button {
+/* 再送リンク */
+.verify-resend {
     background: none;
     border: none;
-    color: #6b7280;
-    font-size: 13px;
+    color: #3b82f6;
+    font-size: 14px;
     cursor: pointer;
+}
+
+.verify-resend:hover {
     text-decoration: underline;
 }
