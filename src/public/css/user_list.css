@@ -32,22 +32,46 @@
 .attendance-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 16px;
+    table-layout: fixed;
 }
 
+.attendance-table th,
+.attendance-table td {
+    text-align: center;
+    padding: 20px 0;
+    box-sizing: border-box;
+    width: calc(100% / 6);
+}
+
+/* ヘッダー下線 */
 .attendance-table thead tr {
     border-bottom: 2px solid #000;
 }
 
-.attendance-table th {
-    text-align: left;
-    padding: 22px 30px;
-    font-weight: bold;
+/* 行の下線 */
+.attendance-table tbody tr {
+    border-bottom: 1px solid #ddd;
 }
 
-.attendance-table td {
-    padding: 22px 30px;
-    border-bottom: 1px solid #e5e5e5;
+.attendance-table th:nth-child(1),
+.attendance-table td:nth-child(1) {
+    width: 20%;
+}
+
+.attendance-table th:nth-child(2),
+.attendance-table td:nth-child(2),
+.attendance-table th:nth-child(3),
+.attendance-table td:nth-child(3),
+.attendance-table th:nth-child(4),
+.attendance-table td:nth-child(4),
+.attendance-table th:nth-child(5),
+.attendance-table td:nth-child(5) {
+    width: 15%;
+}
+
+.attendance-table th:nth-child(6),
+.attendance-table td:nth-child(6) {
+    width: 10%;
 }
 
 /* 詳細リンク */
@@ -139,60 +163,12 @@
     margin-bottom: 40px;
 }
 
-.attendance-table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-}
-
-.attendance-table th,
-.attendance-table td {
-    text-align: center;
-    padding: 18px 10px;
-    white-space: nowrap;
-}
-
-.attendance-table th:nth-child(1),
-.attendance-table td:nth-child(1) {
-    width: 20%;
-}
-
-.attendance-table th:nth-child(2),
-.attendance-table td:nth-child(2) {
-    width: 20%;
-}
-
-.attendance-table th:nth-child(3),
-.attendance-table td:nth-child(3) {
-    width: 20%;
-}
-
-.attendance-table th:nth-child(4),
-.attendance-table td:nth-child(4) {
-    width: 15%;
-}
-
-.attendance-table th:nth-child(5),
-.attendance-table td:nth-child(5) {
-    width: 15%;
-}
-
-.attendance-table th:nth-child(6),
-.attendance-table td:nth-child(6) {
-    width: 10%;
-}
-
-.detail-button {
+.table-card td a {
     display: inline-block;
-    padding: 8px 15px;
+    padding: 6px 14px;
     border: 1px solid #000;
-    color: #000;
+    border-radius: 6px;
     text-decoration: none;
-    border-radius: 4px;
-}
-
-.detail-button:hover {
-    background: #000;
-    color: #fff;
+    color: #000;
 }
 

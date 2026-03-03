@@ -1,6 +1,11 @@
 @extends('layouts.user')
 
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/user_list.css') }}">
+@endsection
+
 @section('content')
+
 <div class="attendance-container">
 
     <h1 class="page-title">
