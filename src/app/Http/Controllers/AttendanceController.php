@@ -121,9 +121,10 @@ class AttendanceController extends Controller
         $endOfMonth   = $currentMonth->copy()->endOfMonth();
 
         // その月の勤怠取得
-        $attendances = Attendance::where('user_id', auth()->id())
+        $attendances = Attendance::with('breaks')   // ← これを追加
+            ->where('user_id', auth()->id())
             ->whereBetween('work_date', [$startOfMonth, $endOfMonth])
-            ->orderBy('work_date', 'desc')
+            ->orderBy('work_date', 'asc')
             ->get();
 
         return view('attendance.list', compact('attendances', 'currentMonth'));
@@ -136,4 +137,61 @@ class AttendanceController extends Controller
 
         return view('attendance.detail', compact('attendance'));
     }
+
+    public function update(Request $request, Attendance $attendance)
+    {
+
+        // 他人の勤怠編集禁止
+        if ($attendance->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'clock_in'  => 'nullable|date_format:H:i',
+            'clock_out' => 'nullable|date_format:H:i',
+            'breaks.*.break_start' => 'nullable|date_format:H:i',
+            'breaks.*.break_end'   => 'nullable|date_format:H:i',
+            'remarks' => 'nullable|string|max:255',
+        ]);
+
+        // 出退勤更新
+        $attendance->update([
+            'clock_in'  => $request->clock_in,
+            'clock_out' => $request->clock_out,
+            'remarks'   => $request->remarks,
+        ]);
+
+        // 休憩更新
+        foreach ($request->breaks ?? [] as $breakId => $breakData) {
+
+            $start = $breakData['break_start'] ?? null;
+            $end   = $breakData['break_end'] ?? null;
+
+            // startが無ければ何もしない
+            if (!$start) {
+                continue;
+            }
+
+            if ($breakId === 'new') {
+
+                $attendance->breaks()->create([
+                    'break_start' => $start,
+                    'break_end'   => $end,
+                ]);
+
+            } else {
+
+                $break = $attendance->breaks()->find($breakId);
+
+                if ($break) {
+                    $break->update([
+                        'break_start' => $start,
+                        'break_end'   => $end,
+                    ]);
+                }
+            }
+        }
+        return back()->with('success', '更新しました');
+    }
+
 }

@@ -16,6 +16,7 @@ class Attendance extends Model
             'clock_in',
             'clock_out',
             'status',
+            'remarks',
         ];
 
         protected $casts = [
@@ -30,53 +31,40 @@ class Attendance extends Model
             return $this->belongsTo(User::class);
         }
 
-        // 休憩は複数
+        /**
+         * 勤怠に紐づく休憩
+         */
         public function breaks()
         {
             return $this->hasMany(BreakTime::class);
         }
 
-        public function getTotalBreakTimeAttribute()
+        /**
+         * 休憩合計時間 HH:MM
+         */
+        public function getBreakDurationAttribute()
         {
-            $totalSeconds = 0;
-
-            foreach ($this->breaks as $break) {
-                if ($break->break_start && $break->break_end) {
-                    $start = strtotime($break->break_start);
-                    $end   = strtotime($break->break_end);
-
-                    $totalSeconds += ($end - $start);
-                }
+            if ($this->breaks->isEmpty()) {
+                return '00:00';
             }
 
-            $hours = floor($totalSeconds / 3600);
-            $minutes = floor(($totalSeconds % 3600) / 60);
+            $breakMinutes = $this->breaks->sum(function ($break) {
+                if ($break->break_start && $break->break_end) {
+                    return Carbon::parse($this->work_date . ' ' . $break->break_start)
+                        ->diffInMinutes(Carbon::parse($this->work_date . ' ' . $break->break_end));
+                }
+                return 0;
+            });
+
+            $hours = floor($breakMinutes / 60);
+            $minutes = $breakMinutes % 60;
 
             return sprintf('%02d:%02d', $hours, $minutes);
         }
 
-        public function getWorkTimeAttribute()
-        {
-            if (!$this->clock_in || !$this->clock_out) {
-                return '';
-            }
-
-            $workSeconds =
-                strtotime($this->clock_out) - strtotime($this->clock_in)
-                - $this->breaks->sum(fn ($b) =>
-                    strtotime($b->break_end) - strtotime($b->break_start)
-                );
-
-            return gmdate('H:i', $workSeconds);
-        }
-
-
-        // 修正申請
-        public function correctionRequests()
-        {
-            return $this->hasMany(AttendanceCorrectionRequest::class);
-        }
-
+        /**
+         * 勤務時間（出勤〜退勤−休憩）HH:MM
+         */
         public function getWorkDurationAttribute()
         {
             if (!$this->clock_in || !$this->clock_out) {
@@ -87,52 +75,25 @@ class Attendance extends Model
                 ->diffInMinutes(Carbon::parse($this->clock_out));
 
             $breakMinutes = $this->breaks->sum(function ($break) {
-
                 if ($break->break_start && $break->break_end) {
-
                     return Carbon::parse($this->work_date . ' ' . $break->break_start)
                         ->diffInMinutes(Carbon::parse($this->work_date . ' ' . $break->break_end));
                 }
-
                 return 0;
             });
 
             $actualMinutes = $workMinutes - $breakMinutes;
-
             $hours = floor($actualMinutes / 60);
             $minutes = $actualMinutes % 60;
 
             return sprintf('%02d:%02d', $hours, $minutes);
         }
 
-        public function getBreakDurationAttribute()
+        /**
+         * 修正申請
+         */
+        public function correctionRequests()
         {
-            if ($this->breaks->isEmpty()) {
-                return '-';
-            }
-
-            $breakMinutes = $this->breaks->sum(function ($break) {
-
-                if ($break->break_start && $break->break_end) {
-
-                    return \Carbon\Carbon::parse($this->work_date . ' ' . $break->break_start)
-                        ->diffInMinutes(
-                            \Carbon\Carbon::parse($this->work_date . ' ' . $break->break_end)
-                        );
-                }
-
-                return 0;
-            });
-
-            if ($breakMinutes === 0) {
-                return '00:00';
-            }
-
-            $hours = floor($breakMinutes / 60);
-            $minutes = $breakMinutes % 60;
-
-            return sprintf('%02d:%02d', $hours, $minutes);
+            return $this->hasMany(AttendanceCorrectionRequest::class);
         }
-
-
-    }
+}

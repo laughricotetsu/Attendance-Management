@@ -64,7 +64,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/attendance/detail/{id}', [AttendanceController::class, 'detail'])
         ->name('attendance.detail');
 
-
+    Route::patch('/attendance/{attendance}', 
+        [AttendanceController::class, 'update']
+    )->name('attendance.update');
 
 });
 

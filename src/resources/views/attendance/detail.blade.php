@@ -10,6 +10,10 @@
 
     <div class="attendance-card">
 
+        <form method="POST" action="{{ route('attendance.update', $attendance->id) }}">
+        @csrf
+        @method('PATCH')
+
         <table class="attendance-table">
 
             <tr>
@@ -27,36 +31,55 @@
             <tr>
                 <th>出勤・退勤</th>
                 <td>
-                    {{ $attendance->clock_in ?? '--:--' }}
-                    〜
-                    {{ $attendance->clock_out ?? '--:--' }}
-                </td>
-            </tr>
+                <input type="time" name="clock_in"
+                        value="{{ old('clock_in', optional($attendance->clock_in)->format('H:i')) }}">
 
-            {{-- 休憩一覧 --}}
-            @foreach($attendance->breaks as $index => $break)
-            <tr>
-                <th>休憩{{ $index + 1 }}</th>
-                <td>
-                    {{ $break->break_start }}
-                    〜
-                    {{ $break->break_end ?? '--:--' }}
-                </td>
-            </tr>
-            @endforeach
+                        〜
 
-            <tr>
-                <th>備考</th>
-                <td>{{ $attendance->remarks ?? '未入力' }}</td>
+                <input type="time" name="clock_out"
+                        value="{{ old('clock_out', optional($attendance->clock_out)->format('H:i')) }}">
+                </td>
+            </td>
             </tr>
+        {{-- 既存休憩 --}}
+        @foreach($attendance->breaks as $index => $break)
+        <tr>
+            <th>休憩{{ $index + 1 }}</th>
+        <td>
+            <input type="time"
+                name="breaks[{{ $break->id }}][break_start]"
+                value="{{ $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '' }}">
+        〜
+            <input type="time"
+                name="breaks[{{ $break->id }}][break_end]"
+                value="{{ $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '' }}">
+        </td>
+        </tr>
+        @endforeach
+
+        {{-- 新規追加用 --}}
+        <tr>
+            <th>休憩{{ $attendance->breaks->count() + 1 }}</th>
+            <td>
+                <input type="time" name="breaks[new][break_start]">
+                〜
+                <input type="time" name="breaks[new][break_end]">
+            </td>
+        </tr>
+
+        <tr>
+            <th>備考</th>
+            <td>
+                <textarea name="remarks">{{ old('remarks', $attendance->remarks) }}</textarea>
+            </td>
+        </tr>
 
         </table>
 
-    </div>
+        <div class="attendance-button-area">
+            <button type="submit" class="edit-button">修正</button>
+        </div>
 
-    <div class="attendance-button-area">
-        <button class="edit-button">修正</button>
-    </div>
+    </form>
 
-</div>
 @endsection
