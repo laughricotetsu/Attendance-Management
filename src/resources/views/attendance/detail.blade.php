@@ -1,13 +1,14 @@
 @extends('layouts.user')
 
 @section('content')
-<div class="attendance-wrapper">
+<div class="attendance-detail-wrapper">
 
-    <h2 class="attendance-title">
-        <span class="title-bar"></span>
-        勤怠詳細
-    </h2>
-
+        <div class="attendance-header">
+            <h2 class="attendance-title">
+                <span class="title-bar"></span>
+                勤怠詳細
+            </h2>
+        </div>
     <div class="attendance-card">
 
         <form method="POST" action="{{ route('attendance.update', $attendance->id) }}">
@@ -81,5 +82,7 @@
         </div>
 
     </form>
+    </div>
+</div>
 
 @endsection
