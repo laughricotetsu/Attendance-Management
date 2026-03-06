@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="attendance-wrapper">
+<div class="clock-wrapper">
     <div class="attendance-box">
 
         {{-- 出勤前 --}}

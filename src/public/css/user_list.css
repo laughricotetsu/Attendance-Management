@@ -1,28 +1,33 @@
 /* 全体背景 */
-.attendance-container {
-    background-color: #f3f3f3;
-    margin: 50px auto;
+.list-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
 }
 
 /* 中央カード */
-.attendance-card {
+.list-card {
     width: 90%;
-    max-width: 900px;
+    max-width: 1000px;
     margin: 60px auto;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    padding: 0;
+    padding: 40;
 }
 
 .attendance-inner {
-    padding: 50px 60px;
+    width: 100%;
 }
 
 /* タイトル */
-.page-title {
+.list-title {
     font-size: 24px;
-    font-weight: 700;
+    font-weight: bold;
+    border-left: 4px solid black;
+    padding-left: 12px;
     margin-bottom: 30px;
 }
 
@@ -33,32 +38,27 @@
 }
 
 /* テーブル */
-.attendance-table {
+.list-table {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed;
-    box-sizing: border-box;
 }
 
-.attendance-table th {
-    font-weight: 600;
+.list-table th {
+    padding: 16px;
+    border-bottom: 2px solid black;
+}
+
+.list-table td {
+    padding: 16px;
+    border-bottom: 1px solid #ddd;
     text-align: center;
-    padding: 20px 0;
 }
 
-.attendance-table td {
-    text-align: center;
-    padding: 20px 0;
-    font-weight: 500;
+.list-table thead tr {
+    border-bottom: 2px solid black;
 }
 
-/* ヘッダー下線 */
-.attendance-table thead tr {
-    border-bottom: 2px solid #000;
-}
-
-/* 行の下線 */
-.attendance-table tbody tr {
+.list-table tbody tr {
     border-bottom: 1px solid #ddd;
 }
 
@@ -70,13 +70,10 @@
     border-radius: 4px;
 }
 
-.attendance-title {
-    font-size: 24px;
-    font-weight: bold;
-    padding-left: 16px;
+.list-title span {
     border-left: 4px solid black;
+    padding-left: 10px;
 }
-
 
 .month-navigation {
     display: flex;
@@ -96,17 +93,6 @@
     font-size: 20px;
     font-weight: bold;
 }
-
-.month-nav {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 40px;
-    margin-bottom: 40px;
-    border-bottom: 1px solid #eee;
-    padding: 60px 80px;
-}
-
 
 .month-box {
     background: #f3f3f3;

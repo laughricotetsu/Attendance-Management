@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>@yield('title')</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/attendance.css') }}">
     <link rel="stylesheet" href="{{ asset('css/user_list.css') }}">
     <link rel="stylesheet" href="{{ asset('css/attendance-detail.css') }}">
 </head>

@@ -2,9 +2,9 @@
 
 @section('content')
 
-<div class="attendance-container">
+<div class="list-container">
 
-    <h1 class="page-title">
+    <h1 class="list-title">
         <span class="bar">|</span>勤怠一覧</h1>
 
 
@@ -22,9 +22,9 @@
                 </a>
         </div>
 
-    <div class="attendance-card">
+    <div class="list-card">
         <div class="attendance-inner">
-            <table class="attendance-table">
+            <table class="list-table">
                 <thead>
                     <tr>
                         <th>日付</th>
@@ -47,8 +47,6 @@
                         <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '-' }}</td>
                         <td>{{ $attendance->break_duration }}</td>
                         <td>{{ $attendance->work_duration }}</td>
-                        <td>-</td>
-                        <td>-</td>
                         <td><a href="{{ route('attendance.detail', $attendance->id) }}"
                         class="detail-button">
                             詳細

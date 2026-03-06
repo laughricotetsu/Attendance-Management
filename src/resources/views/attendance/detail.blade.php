@@ -1,21 +1,22 @@
 @extends('layouts.user')
 
 @section('content')
-<div class="attendance-detail-wrapper">
+<div class="detail-container">
 
         <div class="attendance-header">
-            <h2 class="attendance-title">
+            <h2 class="detail-title">
                 <span class="title-bar"></span>
-                勤怠詳細
+                <span>勤怠詳細</span>
             </h2>
         </div>
-    <div class="attendance-card">
+
+    <div class="detail-card">
 
         <form method="POST" action="{{ route('attendance.update', $attendance->id) }}">
         @csrf
         @method('PATCH')
 
-        <table class="attendance-table">
+        <table class="detail-table">
 
             <tr>
                 <th>名前</th>
@@ -40,7 +41,6 @@
                 <input type="time" name="clock_out"
                         value="{{ old('clock_out', optional($attendance->clock_out)->format('H:i')) }}">
                 </td>
-            </td>
             </tr>
         {{-- 既存休憩 --}}
         @foreach($attendance->breaks as $index => $break)
