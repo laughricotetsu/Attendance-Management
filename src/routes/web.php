@@ -6,6 +6,8 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\AttendanceCorrectionRequestController;
+use App\Models\AttendanceCorrectionRequest;
 // use App\Http\Controllers\AuthController;
 
 
@@ -64,11 +66,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/attendance/detail/{id}', [AttendanceController::class, 'detail'])
         ->name('attendance.detail');
 
-    Route::patch('/attendance/{attendance}', 
-        [AttendanceController::class, 'update']
-    )->name('attendance.update');
+    // Route::patch('/attendance/{attendance}',
+    //     [AttendanceController::class, 'update']
+    // )->name('attendance.update');
+
+    Route::post('/attendance/{attendance}/correction-request',
+            [AttendanceCorrectionRequestController::class, 'store'])
+            ->name('correction.request.store');
 
 });
+
 
 // ===================
 // 管理画面（auth＋admin必須）
@@ -91,7 +98,17 @@ Route::prefix('admin')
             return view('admin.staff.list');
         });
 
-        Route::get('/stamp_correction_request/approve/{id}', function ($id) {
-            return view('admin.stamp_correction_request.approve', compact('id'));
-        });
+        Route::get('/stamp_correction_request/list',
+            [AttendanceCorrectionRequestController::class, 'index']
+        )->name('correction.request.list');
+
+        Route::get(
+            '/stamp_correction_request/approve/{id}',
+            [AttendanceCorrectionRequestController::class,'show']
+        )->name('correction.request.show');
+
+        Route::post(
+            '/stamp_correction_request/approve/{id}',
+            [AttendanceCorrectionRequestController::class, 'approve']
+        )->name('correction.request.approve');
 });

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Attendance;
 use Carbon\Carbon;
 use App\Models\BreakTime;
+use App\Models\AttendanceCorrectionRequest;
+use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
 {
@@ -31,6 +33,37 @@ class AttendanceController extends Controller
 
 
         return view('attendance.index', compact('attendance', 'status'));
+    }
+
+    public function show($id)
+    {
+        $attendance = Attendance::with(['user','breaks'])
+            ->findOrFail($id);
+
+        $isAdmin = auth()->user()->is_admin ?? false;
+
+        $pendingRequest = AttendanceCorrectionRequest::where('attendance_id',$id)
+            ->where('status','pending')
+            ->exists();
+
+        $correctionRequest = null;
+
+        if($isAdmin){
+
+            $correctionRequest = AttendanceCorrectionRequest::where('attendance_id',$id)
+                ->where('status','pending')
+                ->first();
+        }
+
+        return view(
+            'attendance.detail',
+            compact(
+                'attendance',
+                'isAdmin',
+                'pendingRequest',
+                'correctionRequest'
+            )
+        );
     }
 
     public function startWork()
@@ -132,10 +165,36 @@ class AttendanceController extends Controller
 
     public function detail($id)
     {
-        $attendance = Attendance::with(['user', 'breaks'])
+        $attendance = Attendance::with(['user','breaks'])
             ->findOrFail($id);
 
-        return view('attendance.detail', compact('attendance'));
+        // 管理者判定
+        $isAdmin = Auth::user()->is_admin ?? false;
+
+        // 承認待ち申請
+        $pendingRequest = AttendanceCorrectionRequest::where('attendance_id',$id)
+            ->where('status','pending')
+            ->exists();
+
+        // 管理者用申請データ
+        $correctionRequest = null;
+
+        if ($isAdmin) {
+
+            $correctionRequest = AttendanceCorrectionRequest::where('attendance_id',$id)
+                ->where('status','pending')
+                ->first();
+        }
+
+        return view(
+            'attendance.detail',
+            compact(
+                'attendance',
+                'isAdmin',
+                'pendingRequest',
+                'correctionRequest'
+            )
+        );
     }
 
     public function update(Request $request, Attendance $attendance)
@@ -193,5 +252,6 @@ class AttendanceController extends Controller
         }
         return back()->with('success', '更新しました');
     }
+
 
 }

@@ -13,6 +13,7 @@ class AttendanceCorrectionRequest extends Model
             'attendance_id',
             'user_id',
             'status',
+            'reason',
             'approved_by',
             'approved_at',
         ];

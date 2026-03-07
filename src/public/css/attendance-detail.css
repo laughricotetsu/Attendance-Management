@@ -1,8 +1,4 @@
-/* .attendance-detail-wrapper {
-    max-width: 900px;
-    margin: 60px auto;
-}
- */
+
 .detail-container {
     background: white;
     padding: 30px;
@@ -19,7 +15,6 @@
 .detail-title {
     font-size: 24px;
     font-weight: bold;
-    border-left: 4px solid black;
     padding-left: 12px;
     margin-bottom: 30px;
 }
@@ -27,13 +22,6 @@
 .detail-title span {
     border-left: 4px solid black;
     padding-left: 10px;
-}
-
-.title-bar {
-    width: 4px;
-    height: 28px;
-    background: #000;
-    margin-right: 10px;
 }
 
 /* カード */

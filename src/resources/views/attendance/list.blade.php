@@ -1,5 +1,11 @@
 @extends('layouts.user')
 
+@section('title', '勤怠一覧')
+
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/user_list.css') }}">
+@endsection
+
 @section('content')
 
 <div class="list-container">
@@ -8,12 +14,12 @@
         <span class="bar">|</span>勤怠一覧</h1>
 
 
-        <div class="month-nav-wrapper">
+        <div class="list-month-nav">
                 <a href="{{ route('attendance.list', ['month' => $currentMonth->copy()->subMonth()->format('Y-m')]) }}" class="arrow">
                     ←
                 </a>
 
-                <div class="month-label">
+                <div class="list-month-label">
                     {{ $currentMonth->format('Y年n月') }}
                 </div>
 

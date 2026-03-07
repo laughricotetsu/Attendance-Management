@@ -29,7 +29,9 @@
         <nav class="header-nav">
             <a href="/admin/attendance/list">勤怠一覧</a>
             <a href="/admin/staff/list">スタッフ一覧</a>
-            <a href="/stamp_correction_request/list">申請一覧</a>
+            <a href="{{ route('admin.correction.request.list') }}">
+                申請一覧
+            </a>
 
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
