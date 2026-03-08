@@ -15,18 +15,29 @@ class AttendanceCorrectionRequestController extends Controller
     /**
      * 申請一覧（管理者）
      */
-    public function index()
+    public function index(Request $request)
     {
-        $requests = AttendanceCorrectionRequest::with([
+        $user = auth()->user();
+        $status = $request->status ?? 'pending';
+
+        $query = AttendanceCorrectionRequest::with([
             'user',
             'attendance'
         ])
-        ->orderBy('created_at','desc')
-        ->get();
+        ->where('status',$status)
+        ->orderBy('created_at','desc');
 
-        return view('correction_request.list', compact('requests'));
+        if(!$user->is_admin){
+            $query->where('user_id',$user->id);
+        }
+
+        $requests = $query->get();
+
+        return view(
+            'stamp_correction_request.list',
+            compact('requests')
+        );
     }
-
 
     /**
      * 修正申請（ユーザー）
@@ -38,6 +49,15 @@ class AttendanceCorrectionRequestController extends Controller
         ]);
 
         $attendance = Attendance::with('breaks')->findOrFail($attendanceId);
+
+        $exists = AttendanceCorrectionRequest::where('attendance_id',$attendanceId)
+            ->where('status','pending')
+            ->exists();
+
+        if($exists){
+            return redirect()->back()
+                ->with('error','既に修正申請中です');
+        }
 
         // 申請ヘッダー作成
         $correctionRequest = AttendanceCorrectionRequest::create([

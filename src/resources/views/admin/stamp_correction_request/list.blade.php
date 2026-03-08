@@ -1,4 +1,12 @@
+@if(Auth::user()->is_admin)
+
 @extends('layouts.admin')
+
+@else
+
+@extends('layouts.user')
+
+@endif
 
 @section('title','申請一覧')
 

@@ -98,8 +98,9 @@ Route::prefix('admin')
             return view('admin.staff.list');
         });
 
-        Route::get('/stamp_correction_request/list',
-            [AttendanceCorrectionRequestController::class, 'index']
+        Route::get(
+        '/stamp_correction_request/list',
+        [AttendanceCorrectionRequestController::class,'index']
         )->name('correction.request.list');
 
         Route::get(
