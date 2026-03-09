@@ -50,9 +50,17 @@
             <tr>
                 <td>{{ $user->name }}</td>
 
-                <td>{{ optional($attendance?->clock_in)->format('H:i') }}</td>
+                <td>
+                @if($attendance && $attendance->clock_in)
+                    {{ \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') }}
+                @endif
+                </td>
 
-                <td>{{ optional($attendance?->clock_out)->format('H:i') }}</td>
+                <td>
+                @if($attendance && $attendance->clock_out)
+                    {{ \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') }}
+                @endif
+                </td>
 
                 <td>{{ $attendance?->break_duration ?? '' }}</td>
 

@@ -18,16 +18,15 @@ class AttendanceCorrectionRequestController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
+
         $status = $request->status ?? 'pending';
 
-        $query = AttendanceCorrectionRequest::with([
-            'user',
-            'attendance'
-        ])
-        ->where('status',$status)
-        ->orderBy('created_at','desc');
+        $query = AttendanceCorrectionRequest::with(['user','attendance'])
+            ->where('status',$status)
+            ->latest();
 
-        if(!$user->is_admin){
+        // 一般ユーザーは自分の申請のみ
+        if ($user->role !== 'admin') {
             $query->where('user_id',$user->id);
         }
 
@@ -35,10 +34,9 @@ class AttendanceCorrectionRequestController extends Controller
 
         return view(
             'stamp_correction_request.list',
-            compact('requests')
+            compact('requests','status')
         );
     }
-
     /**
      * 修正申請（ユーザー）
      */
@@ -172,28 +170,35 @@ class AttendanceCorrectionRequestController extends Controller
      */
     public function show($id)
     {
-        $correctionRequest = AttendanceCorrectionRequest::with([
-            'user',
-            'attendance',
-            'details'
+        if(auth()->user()->role !== 'admin'){
+            abort(403);
+        }
+
+        $request = AttendanceCorrectionRequest::with([
+            'user','attendance','details'
         ])->findOrFail($id);
 
         return view(
             'admin.stamp_correction_request.approve',
-            compact('correctionRequest')
+            compact('request')
         );
     }
-
 
     /**
      * 承認処理
      */
     public function approve($id)
     {
-        $correctionRequest = AttendanceCorrectionRequest::with('details')
+        $request = AttendanceCorrectionRequest::with('details')
             ->findOrFail($id);
 
-        foreach ($correctionRequest->details as $detail) {
+        if ($request->status === 'approved') {
+            return redirect()
+                ->route('correction.request.list')
+                ->with('error','この申請はすでに承認されています');
+        }
+
+        foreach ($request->details as $detail) {
 
             switch ($detail->target_type) {
 
@@ -224,13 +229,10 @@ class AttendanceCorrectionRequestController extends Controller
             }
         }
 
-        $correctionRequest->update([
+        $request->update([
             'status' => 'approved'
         ]);
 
-        return redirect()
-            ->route('admin.correction.request.list')
-            ->with('success','申請を承認しました');
+        return redirect()->route('correction.request.list');
     }
-
 }

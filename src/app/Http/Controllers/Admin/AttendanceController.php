@@ -142,20 +142,16 @@ class AttendanceController extends Controller
             ]);
         }
 
-        // // ③ 備考
-        // if ($attendance->note !== $request->note) {
-        //     AttendanceCorrectionRequestDetail::create([
-        //         'request_id'  => $correctionRequest->id,
-        //         'target_type' => 'note',
-        //         'target_id'   => $attendance->id,
-        //         'before_value'=> $attendance->note,
-        //         'after_value' => $request->note,
-        //     ]);
-        // }
-
         return redirect()
             ->route('admin.attendance.detail', $attendance->id)
             ->with('message', '修正申請を送信しました');
+    }
+
+    public function staffList()
+    {
+        $staffs = User::where('role','user')->get();
+
+        return view('admin.staff.list',compact('staffs'));
     }
 
 

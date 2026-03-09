@@ -8,6 +8,7 @@
     {{-- 管理画面共通CSS --}}
     <link rel="stylesheet" href="{{ asset('css/common.css') }}">
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
 
     {{-- ページごとCSS --}}
@@ -29,7 +30,7 @@
         <nav class="header-nav">
             <a href="/admin/attendance/list">勤怠一覧</a>
             <a href="/admin/staff/list">スタッフ一覧</a>
-            <a href="{{ route('admin.correction.request.list') }}">
+            <a href="{{ route('correction.request.list') }}">
                 申請一覧
             </a>
 

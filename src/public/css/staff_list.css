@@ -1,0 +1,41 @@
+/* スタッフ一覧 */
+
+.staff-container {
+    max-width: 900px;
+    margin: 60px auto;
+}
+
+
+.staff-card {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+
+.staff-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+
+.staff-table th {
+    text-align: left;
+    padding: 16px;
+    border-bottom: 2px solid #ddd;
+    font-size: 14px;
+}
+
+
+.staff-table td {
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+
+.detail-link {
+    color: #000;
+    text-decoration: underline;
+}

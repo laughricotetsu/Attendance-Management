@@ -1,80 +1,59 @@
 @extends('layouts.admin')
 
-@section('title','申請一覧')
-
 @section('css')
-<link rel="stylesheet" href="{{ asset('css/admin_list.css') }}">
+<link rel="stylesheet" href="{{ asset('css/staff_list.css') }}">
 @endsection
+
 
 @section('content')
 
-<div class="list-container">
 
-    <h2 class="list-title">
-        <span class="title-bar"></span>
-        申請一覧
-    </h2>
+<div class="staff-container">
 
-    <div class="list-card">
+    <h2 class="page-title">スタッフ一覧</h2>
 
-        <table class="list-table">
+        <div class="staff-card">
+
+        <table class="staff-table">
 
             <thead>
+
                 <tr>
-                    <th>日付</th>
-                    <th>名前</th>
-                    <th>対象</th>
-                    <th>申請理由</th>
-                    <th>状態</th>
-                    <th></th>
+                <th>名前</th>
+                <th>メールアドレス</th>
+                <th>勤怠</th>
                 </tr>
+
             </thead>
 
             <tbody>
 
-            @foreach($requests as $request)
+                @foreach($staffs as $staff)
 
-            <tr>
+                <tr>
 
-                <td>
-                    {{ \Carbon\Carbon::parse($request->attendance->work_date)->format('m/d') }}
-                </td>
+                    <td>
+                        {{ $staff->name }}
+                    </td>
 
-                <td>
-                    {{ $request->user->name }}
-                </td>
+                    <td>
+                        {{ $staff->email }}
+                    </td>
 
-                <td>
-                    勤怠
-                </td>
+                    <td>
 
-                <td>
-                    {{ $request->reason }}
-                </td>
+                        <a href="{{ route('admin.attendance.list',['user_id'=>$staff->id]) }}"
+                        class="detail-link">
 
-                <td>
-
-                    @if($request->status === 'pending')
-                        承認待ち
-                    @elseif($request->status === 'approved')
-                        承認
-                    @else
-                        却下
-                    @endif
-
-                </td>
-
-                <td>
-
-                    <a href="{{ route('admin.attendance.detail',$request->attendance_id) }}">
                         詳細
-                    </a>
 
-                </td>
+                        </a>
 
-            </tr>
+                    </td>
 
-            @endforeach
+                </tr>
+
+                @endforeach
 
             </tbody>
 
