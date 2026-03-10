@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\BreakTime;
+use Illuminate\Support\Facades\DB;
 use App\Models\AttendanceCorrectionRequest;
 use App\Models\AttendanceCorrectionRequestDetail;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\AttendanceCorrectionStoreRequest;
 
 class AttendanceCorrectionRequestController extends Controller
 {
@@ -40,199 +42,202 @@ class AttendanceCorrectionRequestController extends Controller
     /**
      * 修正申請（ユーザー）
      */
-    public function store(Request $request, $attendanceId)
+    public function store(AttendanceCorrectionStoreRequest $request, $attendanceId)
     {
-        $request->validate([
-            'remarks' => 'required|string|max:255',
-        ]);
-
         $attendance = Attendance::with('breaks')->findOrFail($attendanceId);
 
-        $exists = AttendanceCorrectionRequest::where('attendance_id',$attendanceId)
-            ->where('status','pending')
-            ->exists();
+        DB::beginTransaction();
 
-        if($exists){
-            return redirect()->back()
-                ->with('error','既に修正申請中です');
-        }
+        try {
 
-        // 申請ヘッダー作成
-        $correctionRequest = AttendanceCorrectionRequest::create([
-            'attendance_id' => $attendance->id,
-            'user_id' => Auth::id(),
-            'status' => 'pending',
-            'reason' => $request->remarks,
-        ]);
+            // 修正申請
+            $correctionRequest = AttendanceCorrectionRequest::create([
+                'attendance_id' => $attendance->id,
+                'user_id' => Auth::id(),
+                'status' => 'pending',
+                'reason' => $request->remarks,
+            ]);
 
-        $details = [];
+            $details = [];
 
-        // ======================
-        // 出勤
-        // ======================
-        if ($request->clock_in != $attendance->clock_in) {
+            // 出勤
+            if ($request->clock_in != optional($attendance->clock_in)->format('H:i')) {
 
-            $details[] = [
-                'request_id' => $correctionRequest->id,
-                'target_type' => 'clock_in',
-                'target_id' => $attendance->id,
-                'before_value' => $attendance->clock_in,
-                'after_value' => $request->clock_in,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
+                $details[] = [
+                    'request_id' => $correctionRequest->id,
+                    'target_type' => 'clock_in',
+                    'target_id' => $attendance->id,
+                    'before_value' => $attendance->clock_in,
+                    'after_value' => $request->clock_in,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
 
-        // ======================
-        // 退勤
-        // ======================
-        if ($request->clock_out != $attendance->clock_out) {
+            // 退勤
+            if ($request->clock_out != optional($attendance->clock_out)->format('H:i')) {
 
-            $details[] = [
-                'request_id' => $correctionRequest->id,
-                'target_type' => 'clock_out',
-                'target_id' => $attendance->id,
-                'before_value' => $attendance->clock_out,
-                'after_value' => $request->clock_out,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
+                $details[] = [
+                    'request_id' => $correctionRequest->id,
+                    'target_type' => 'clock_out',
+                    'target_id' => $attendance->id,
+                    'before_value' => $attendance->clock_out,
+                    'after_value' => $request->clock_out,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
 
-        // ======================
-        // 備考
-        // ======================
-        if ($request->remarks != $attendance->remarks) {
+            // 休憩
+            foreach ($attendance->breaks as $index => $break) {
 
-            $details[] = [
-                'request_id' => $correctionRequest->id,
-                'target_type' => 'remarks',
-                'target_id' => $attendance->id,
-                'before_value' => $attendance->remarks,
-                'after_value' => $request->remarks,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
+                $start = $request->break_start[$index] ?? null;
+                $end = $request->break_end[$index] ?? null;
 
-        // ======================
-        // 休憩
-        // ======================
-        if ($request->breaks) {
+                if ($start != optional($break->break_start)->format('H:i')) {
 
-            foreach ($request->breaks as $index => $breakData) {
+                    $details[] = [
+                        'request_id' => $correctionRequest->id,
+                        'target_type' => 'break_start',
+                        'target_id' => $break->id,
+                        'before_value' => $break->break_start,
+                        'after_value' => $start,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
 
-                $break = $attendance->breaks[$index] ?? null;
+                if ($end != optional($break->break_end)->format('H:i')) {
 
-                if ($break) {
-
-                    if ($breakData['break_start'] != $break->break_start) {
-
-                        $details[] = [
-                            'request_id' => $correctionRequest->id,
-                            'target_type' => 'break_start',
-                            'target_id' => $break->id,
-                            'before_value' => $break->break_start,
-                            'after_value' => $breakData['break_start'],
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ];
-                    }
-
-                    if ($breakData['break_end'] != $break->break_end) {
-
-                        $details[] = [
-                            'request_id' => $correctionRequest->id,
-                            'target_type' => 'break_end',
-                            'target_id' => $break->id,
-                            'before_value' => $break->break_end,
-                            'after_value' => $breakData['break_end'],
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ];
-                    }
-
+                    $details[] = [
+                        'request_id' => $correctionRequest->id,
+                        'target_type' => 'break_end',
+                        'target_id' => $break->id,
+                        'before_value' => $break->break_end,
+                        'after_value' => $end,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
                 }
             }
-        }
 
-        // 詳細保存
-        if (!empty($details)) {
+            // 備考
+            if ($request->remarks != $attendance->remarks) {
+
+                $details[] = [
+                    'request_id' => $correctionRequest->id,
+                    'target_type' => 'remarks',
+                    'target_id' => $attendance->id,
+                    'before_value' => $attendance->remarks,
+                    'after_value' => $request->remarks,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
             AttendanceCorrectionRequestDetail::insert($details);
+
+            DB::commit();
+
+            return redirect()->route('attendance.list')
+                ->with('success', '修正申請を送信しました');
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+            throw $e;
         }
-
-        return redirect()->back()->with('success','修正申請を送信しました');
     }
-
-
     /**
      * 承認画面
      */
     public function show($id)
     {
-        if(auth()->user()->role !== 'admin'){
-            abort(403);
-        }
-
         $request = AttendanceCorrectionRequest::with([
-            'user','attendance','details'
+            'user',
+            'details',
+            'attendance.breaks'
         ])->findOrFail($id);
+
+        $attendance = $request->attendance;
 
         return view(
             'admin.stamp_correction_request.approve',
-            compact('request')
+            compact('request','attendance')
         );
     }
-
     /**
      * 承認処理
      */
     public function approve($id)
     {
-        $request = AttendanceCorrectionRequest::with('details')
-            ->findOrFail($id);
+        $request = AttendanceCorrectionRequest::with('details')->findOrFail($id);
 
-        if ($request->status === 'approved') {
+        DB::beginTransaction();
+
+        try {
+
+            foreach ($request->details as $detail) {
+
+                switch ($detail->target_type) {
+
+                    case 'clock_in':
+
+                        Attendance::where('id',$detail->target_id)
+                            ->update([
+                                'clock_in'=>$detail->after_value
+                            ]);
+
+                    break;
+
+
+                    case 'clock_out':
+
+                        Attendance::where('id',$detail->target_id)
+                            ->update([
+                                'clock_out'=>$detail->after_value
+                            ]);
+
+                    break;
+
+
+                    case 'break_start':
+
+                        BreakTime::where('id',$detail->target_id)
+                            ->update([
+                                'break_start'=>$detail->after_value
+                            ]);
+
+                    break;
+
+
+                    case 'break_end':
+
+                        BreakTime::where('id',$detail->target_id)
+                            ->update([
+                                'break_end'=>$detail->after_value
+                            ]);
+
+                    break;
+
+                }
+
+            }
+
+            $request->update([
+                'status'=>'approved'
+            ]);
+
+            DB::commit();
+
             return redirect()
                 ->route('correction.request.list')
-                ->with('error','この申請はすでに承認されています');
+                ->with('success','承認しました');
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+            throw $e;
         }
-
-        foreach ($request->details as $detail) {
-
-            switch ($detail->target_type) {
-
-                case 'clock_in':
-                    Attendance::where('id',$detail->target_id)
-                        ->update(['clock_in'=>$detail->after_value]);
-                    break;
-
-                case 'clock_out':
-                    Attendance::where('id',$detail->target_id)
-                        ->update(['clock_out'=>$detail->after_value]);
-                    break;
-
-                case 'remarks':
-                    Attendance::where('id',$detail->target_id)
-                        ->update(['remarks'=>$detail->after_value]);
-                    break;
-
-                case 'break_start':
-                    BreakTime::where('id',$detail->target_id)
-                        ->update(['break_start'=>$detail->after_value]);
-                    break;
-
-                case 'break_end':
-                    BreakTime::where('id',$detail->target_id)
-                        ->update(['break_end'=>$detail->after_value]);
-                    break;
-            }
-        }
-
-        $request->update([
-            'status' => 'approved'
-        ]);
-
-        return redirect()->route('correction.request.list');
     }
 }

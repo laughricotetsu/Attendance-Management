@@ -51,20 +51,18 @@
     border-bottom: 1px solid #ddd;
 }
 
-/* input */
 input[type="time"] {
-    padding: 6px 10px;
+    padding: 6px;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
 
-/* textarea */
 textarea {
     width: 100%;
     height: 80px;
-    padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    padding: 8px;
 }
 
 /* ボタン */
@@ -81,3 +79,18 @@ textarea {
     border: none;
     cursor: pointer;
 }
+
+/* エラーメッセージ */
+
+.error-message {
+    color: #ff0000;
+    font-size: 14px;
+    margin-top: 6px;
+}
+
+/* エラーinput */
+
+.input-error {
+    border: 2px solid #ff0000;
+}
+
