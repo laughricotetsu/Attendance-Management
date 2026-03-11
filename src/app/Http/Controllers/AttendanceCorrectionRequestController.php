@@ -166,78 +166,77 @@ class AttendanceCorrectionRequestController extends Controller
             compact('request','attendance')
         );
     }
+
+        public function approve($id)
+    {
+        $request = AttendanceCorrectionRequest::with([
+            'user',
+            'attendance',
+            'details'
+        ])->findOrFail($id);
+
+        return view(
+            'admin.stamp_correction_request.approve',
+            compact('request')
+        );
+    }
+
     /**
      * 承認処理
      */
-    public function approve($id)
+    public function approveUpdate($requestId)
     {
-        $request = AttendanceCorrectionRequest::with('details')->findOrFail($id);
+        $request = AttendanceCorrectionRequest::with('details')->findOrFail($requestId);
 
-        DB::beginTransaction();
-
-        try {
+        DB::transaction(function () use ($request) {
 
             foreach ($request->details as $detail) {
 
                 switch ($detail->target_type) {
 
                     case 'clock_in':
-
-                        Attendance::where('id',$detail->target_id)
+                        Attendance::where('id', $detail->target_id)
                             ->update([
-                                'clock_in'=>$detail->after_value
+                                'clock_in' => $detail->after_value
                             ]);
-
-                    break;
-
+                        break;
 
                     case 'clock_out':
-
-                        Attendance::where('id',$detail->target_id)
+                        Attendance::where('id', $detail->target_id)
                             ->update([
-                                'clock_out'=>$detail->after_value
+                                'clock_out' => $detail->after_value
                             ]);
-
-                    break;
-
+                        break;
 
                     case 'break_start':
-
-                        BreakTime::where('id',$detail->target_id)
+                        BreakTime::where('id', $detail->target_id)
                             ->update([
-                                'break_start'=>$detail->after_value
+                                'break_start' => $detail->after_value
                             ]);
-
-                    break;
-
+                        break;
 
                     case 'break_end':
-
-                        BreakTime::where('id',$detail->target_id)
+                        BreakTime::where('id', $detail->target_id)
                             ->update([
-                                'break_end'=>$detail->after_value
+                                'break_end' => $detail->after_value
                             ]);
+                        break;
 
-                    break;
-
+                    case 'remarks':
+                        Attendance::where('id', $detail->target_id)
+                            ->update([
+                                'remarks' => $detail->after_value
+                            ]);
+                        break;
                 }
-
             }
 
             $request->update([
-                'status'=>'approved'
+                'status' => 'approved'
             ]);
+        });
 
-            DB::commit();
-
-            return redirect()
-                ->route('correction.request.list')
-                ->with('success','承認しました');
-
-        } catch (\Exception $e) {
-
-            DB::rollBack();
-            throw $e;
-        }
+        return redirect()->route('correction.request.list')
+            ->with('success', '承認しました');
     }
 }

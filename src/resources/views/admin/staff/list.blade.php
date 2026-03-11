@@ -28,29 +28,23 @@
 
             <tbody>
 
-                @foreach($staffs as $staff)
+                @foreach($users as $user)
 
                 <tr>
 
                     <td>
-                        {{ $staff->name }}
+                        {{ $user->name }}
                     </td>
 
                     <td>
-                        {{ $staff->email }}
+                        {{ $user->email }}
                     </td>
 
                     <td>
-
-                        <a href="{{ route('admin.attendance.list',['user_id'=>$staff->id]) }}"
-                        class="detail-link">
-
+                        <a href="{{ route('admin.staff.attendance',$user->id) }}">
                         詳細
-
                         </a>
-
                     </td>
-
                 </tr>
 
                 @endforeach

@@ -81,7 +81,7 @@ $layout = Auth::user()->role === 'admin'
                 @if(Auth::user()->role === 'admin')
 
                 <a class="detail-btn"
-                href="{{ route('correction.request.show',$request->id) }}">
+                href="{{ route('admin.correction.request.approve',$request->id) }}">
                 詳細
                 </a>
 
