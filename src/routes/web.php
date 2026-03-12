@@ -152,6 +152,11 @@ Route::middleware(['auth','admin'])->group(function () {
             [AdminAttendanceController::class,'update']
         )->name('attendance.update');
 
+        Route::get(
+    '/staff/{id}/attendance/csv',
+    [StaffController::class,'exportCsv']
+)->name('staff.attendance.csv');
+
 
         /*
         | スタッフ一覧

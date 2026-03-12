@@ -94,6 +94,19 @@
 
             </table>
 
+            <div class="csv-button-area">
+
+                <a href="{{ route('admin.staff.attendance.csv',[
+                    'id'=>$user->id,
+                    'month'=>$month->format('Y-m')
+                ]) }}" class="csv-button">
+
+                CSV出力
+
+                </a>
+
+            </div>
+
         </div>
 
     </div>

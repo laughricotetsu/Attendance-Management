@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Models\User;
 use App\Models\Attendance;
 use Carbon\Carbon;
@@ -54,5 +55,69 @@ class StaffController extends Controller
                 'nextMonth'
             )
         );
+    }
+
+    public function exportCsv(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $month = $request->month
+            ? Carbon::parse($request->month)
+            : Carbon::now();
+
+        $start = $month->copy()->startOfMonth();
+        $end = $month->copy()->endOfMonth();
+
+        $attendances = Attendance::where('user_id',$id)
+            ->whereBetween('work_date',[$start,$end])
+            ->orderBy('work_date')
+            ->get();
+
+        $fileName = $user->name . '_' . $month->format('Y_m') . '_attendance.csv';
+
+        $response = new StreamedResponse(function () use ($attendances) {
+
+            $handle = fopen('php://output','w');
+
+            // ヘッダー
+            fputcsv($handle,[
+                '日付',
+                '出勤',
+                '退勤',
+                '休憩時間',
+                '勤務時間'
+            ]);
+
+            foreach ($attendances as $attendance){
+
+                fputcsv($handle,[
+
+                    $attendance->work_date,
+
+                    optional($attendance->clock_in)->format('H:i'),
+
+                    optional($attendance->clock_out)->format('H:i'),
+
+                    $attendance->break_duration,
+
+                    $attendance->work_duration
+
+                ]);
+            }
+
+            fclose($handle);
+        });
+
+        $response->headers->set(
+            'Content-Type',
+            'text/csv'
+        );
+
+        $response->headers->set(
+            'Content-Disposition',
+            'attachment; filename="'.$fileName.'"'
+        );
+
+        return $response;
     }
 }
