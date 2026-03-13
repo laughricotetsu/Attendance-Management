@@ -75,49 +75,43 @@ class StaffController extends Controller
 
         $fileName = $user->name . '_' . $month->format('Y_m') . '_attendance.csv';
 
-        $response = new StreamedResponse(function () use ($attendances) {
+        return response()->streamDownload(function() use ($attendances){
 
             $handle = fopen('php://output','w');
+
+            // ⭐ Excel文字化け防止
+            fwrite($handle, "\xEF\xBB\xBF");
 
             // ヘッダー
             fputcsv($handle,[
                 '日付',
                 '出勤',
                 '退勤',
-                '休憩時間',
-                '勤務時間'
+                '休憩',
+                '合計'
             ]);
 
             foreach ($attendances as $attendance){
 
                 fputcsv($handle,[
 
-                    $attendance->work_date,
+                    Carbon::parse($attendance->work_date)->format('Y-m-d'),
 
                     optional($attendance->clock_in)->format('H:i'),
 
                     optional($attendance->clock_out)->format('H:i'),
 
-                    $attendance->break_duration,
+                    $attendance->break_duration ?? '',
 
-                    $attendance->work_duration
+                    $attendance->work_duration ?? ''
 
                 ]);
+
             }
 
             fclose($handle);
-        });
 
-        $response->headers->set(
-            'Content-Type',
-            'text/csv'
-        );
+        },$fileName);
 
-        $response->headers->set(
-            'Content-Disposition',
-            'attachment; filename="'.$fileName.'"'
-        );
-
-        return $response;
     }
 }

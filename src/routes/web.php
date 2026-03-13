@@ -153,9 +153,9 @@ Route::middleware(['auth','admin'])->group(function () {
         )->name('attendance.update');
 
         Route::get(
-    '/staff/{id}/attendance/csv',
-    [StaffController::class,'exportCsv']
-)->name('staff.attendance.csv');
+            '/staff/{id}/attendance/csv',
+            [StaffController::class,'exportCsv']
+        )->name('staff.attendance.csv');
 
 
         /*

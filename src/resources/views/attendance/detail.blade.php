@@ -192,8 +192,7 @@
                 @else
 
                 <button class="pending-button" disabled>
-                    承認待ち
-                </button>
+                    ＊承認待ちのため修正はできません。
 
                 @endif
 

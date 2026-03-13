@@ -94,6 +94,8 @@
 
             </table>
 
+        </div>
+
             <div class="csv-button-area">
 
                 <a href="{{ route('admin.staff.attendance.csv',[
@@ -107,7 +109,6 @@
 
             </div>
 
-        </div>
 
     </div>
 
