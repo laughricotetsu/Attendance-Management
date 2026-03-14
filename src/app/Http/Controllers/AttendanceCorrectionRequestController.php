@@ -236,7 +236,6 @@ class AttendanceCorrectionRequestController extends Controller
             ]);
         });
 
-        return redirect()->route('correction.request.list')
-            ->with('success', '承認しました');
+        return back();
     }
 }

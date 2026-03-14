@@ -18,17 +18,34 @@
     background: white;
     border-radius: 8px;
     padding: 12px 30px;
-
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     margin-bottom: 30px;
 }
 
+.arrow {
+    text-decoration: none;
+    font-size: 22px;
+    color: #666;
+}
+
+.arrow:hover {
+    color: #000;
+}
+
 .list-month-label {
-    font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 18px;
     font-weight: bold;
+}
+
+.calendar-icon {
+    width: 20px;
+    height: 20px;
+    color: #555;
 }
 
 /* カード */
@@ -63,4 +80,12 @@
     border-radius: 4px;
     text-decoration: none;
     color: black;
+}
+
+.detail-button {
+    border: none;
+    background: none;
+    text-decoration: none;
+    outline: none;
+    cursor: pointer;
 }

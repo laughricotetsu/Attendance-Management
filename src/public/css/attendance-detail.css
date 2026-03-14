@@ -159,3 +159,12 @@ textarea {
     border: 2px solid #ff0000;
 }
 
+.approved {
+    background-color: #555;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    display: inline-block;
+}

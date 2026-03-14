@@ -121,9 +121,9 @@
 
                 @else
 
-                    <p class="approved-label">
+                    <span class="approved">
                     承認済み
-                    </p>
+                    </span>
 
                 @endif
 

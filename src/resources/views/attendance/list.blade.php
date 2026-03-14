@@ -19,9 +19,15 @@
                     ←
                 </a>
 
-                <div class="list-month-label">
-                    {{ $currentMonth->format('Y年n月') }}
-                </div>
+            <div class="list-month-label">
+                <svg class="calendar-icon" xmlns="http://www.w3.org/2000/svg"
+                    fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5M4.5 5.25h15A2.25 2.25 0 0121.75 7.5v11.25A2.25 2.25 0 0119.5 21h-15A2.25 2.25 0 012.25 18.75V7.5A2.25 2.25 0 014.5 5.25z" />
+                </svg>
+
+                {{ $currentMonth->format('Y/m') }}
+            </div>
 
                 <a href="{{ route('attendance.list', ['month' => $currentMonth->copy()->addMonth()->format('Y-m')]) }}" class="arrow">
                     →
