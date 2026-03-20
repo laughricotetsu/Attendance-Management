@@ -74,27 +74,27 @@ http://localhost:8025
 ### ■ Laravelのメール設定  
 1. .env ファイルを以下のように設定してください：  
   
-MAIL_MAILER=smtp  
-MAIL_HOST=mailhog  
-MAIL_PORT=1025  
-MAIL_USERNAME=null  
-MAIL_PASSWORD=null  
-MAIL_ENCRYPTION=null  
-MAIL_FROM_ADDRESS=test@example.com  
-MAIL_FROM_NAME="Laravel App"  
+  MAIL_MAILER=smtp  
+  MAIL_HOST=mailhog  
+  MAIL_PORT=1025  
+  MAIL_USERNAME=null  
+  MAIL_PASSWORD=null  
+  MAIL_ENCRYPTION=null  
+  MAIL_FROM_ADDRESS=test@example.com  
+  MAIL_FROM_NAME="Laravel App"  
   
 2. docker-compose.ymlを修正してください:  
- services:  
- app:  
- mailhog:  
- image: mailhog/mailhog  
- container_name: mailhog  
- ports:  
- -"8025:8025"  
- -"1025:1025"  
+  services:  
+  app:  
+  mailhog:  
+  image: mailhog/mailhog  
+  container_name: mailhog  
+  ports:  
+  - "8025:8025"  
+  - "1025:1025"  
   
 3. 起動  
- docker-compose up -d  
+  docker-compose up -d  
   
 ### ■ 動作確認手順  
   
@@ -186,39 +186,41 @@ attendance_correction_requests	1 : N attendance_correction_request_details
 ## ER図
 ![alt](attendance_erd.drawio.png)
   
+  
+  
 ## PHPUnitを利用したテストに関して  
   
 ### テスト用の.envファイルの作成  
 PHPコンテナにログインし、.envをコピーして.env.testingファイルを作成してください。  
   
- $ cp .env .env.testing  
+  $ cp .env .env.testing  
   
 ### .env.testingの編集  
   
 1. ファイルの文頭部分にあるAPP_ENVとAPP_KEYを編集  
   
-APP_ENV=test  
-APP_KEY=  
+  APP_ENV=test  
+  APP_KEY=  
   
 2. データベースの接続情報を編集  
   
-DB_DATABASE=demo_test  
-DB_USERNAME=root  
-DB_PASSWORD=root  
+  DB_DATABASE=demo_test  
+  DB_USERNAME=root  
+  DB_PASSWORD=root  
   
 3. テスト用のアプリケーションキーを加える  
   
- $ php artisan key:generate --env=testing  
+  $ php artisan key:generate --env=testing  
   
- $ php artisan config:clear  
+  $ php artisan config:clear  
   
 ### テスト用のテーブルを作成  
   
- $ php artisan migrate --env=testing  
+  $ php artisan migrate --env=testing  
   
 ### PHPUnitを実行  
   
- $ php artisan test  
+  $ php artisan test  
   
   
 

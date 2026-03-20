@@ -50,8 +50,7 @@ class Attendance extends Model
 
             $breakMinutes = $this->breaks->sum(function ($break) {
                 if ($break->break_start && $break->break_end) {
-                    return Carbon::parse($this->work_date . ' ' . $break->break_start)
-                        ->diffInMinutes(Carbon::parse($this->work_date . ' ' . $break->break_end));
+                    return $break->break_start->diffInMinutes($break->break_end);
                 }
                 return 0;
             });
@@ -71,13 +70,11 @@ class Attendance extends Model
                 return '-';
             }
 
-            $workMinutes = Carbon::parse($this->clock_in)
-                ->diffInMinutes(Carbon::parse($this->clock_out));
+            $workMinutes = $this->clock_in->diffInMinutes($this->clock_out);
 
             $breakMinutes = $this->breaks->sum(function ($break) {
                 if ($break->break_start && $break->break_end) {
-                    return Carbon::parse($this->work_date . ' ' . $break->break_start)
-                        ->diffInMinutes(Carbon::parse($this->work_date . ' ' . $break->break_end));
+                    return $break->break_start->diffInMinutes($break->break_end);
                 }
                 return 0;
             });
@@ -88,7 +85,6 @@ class Attendance extends Model
 
             return sprintf('%02d:%02d', $hours, $minutes);
         }
-
         /**
          * 修正申請
          */
