@@ -11,67 +11,94 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Contracts\LogoutResponse;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\LoginRequest;
 use Laravel\Fortify\Contracts\RegisterResponse;
-use App\Http\Responses\RegisterResponse as CustomRegisterResponse;
+use Illuminate\Support\Facades\Auth;
 
+// ★ LoginRequest を読み込む
+use App\Http\Requests\LoginRequest;
+use App\Http\Responses\RegisterResponse as CustomRegisterResponse;
 
 class FortifyServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register()
     {
+        // 登録後のリダイレクトカスタム
         $this->app->singleton(RegisterResponse::class, CustomRegisterResponse::class);
     }
-    /**
-     * Bootstrap any application services.
-     */
+
     public function boot()
     {
+        /*
+        |--------------------------------------------------------------------------
+        | Register
+        |--------------------------------------------------------------------------
+        */
         Fortify::registerView(function () {
             return view('auth.register');
         });
 
-        {
         Fortify::createUsersUsing(CreateNewUser::class);
-            }
 
+        /*
+        |--------------------------------------------------------------------------
+        | Login View
+        |--------------------------------------------------------------------------
+        */
         Fortify::loginView(function () {
             return view('auth.login');
         });
 
+        /*
+        |--------------------------------------------------------------------------
+        | Login Rate Limit
+        |--------------------------------------------------------------------------
+        */
         RateLimiter::for('login', function (Request $request) {
-            $email = (string) $request->email;
-
-            return Limit::perMinute(10)->by($email . $request->ip());
+            return Limit::perMinute(10)->by(
+                ($request->email ?? '') . $request->ip()
+            );
         });
 
+        /*
+        |--------------------------------------------------------------------------
+        | Logout Response
+        |--------------------------------------------------------------------------
+        */
         $this->app->singleton(LogoutResponse::class, CustomLogoutResponse::class);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Login Auth Process
+        | ★ LoginRequest を強制的に実行する
+        |--------------------------------------------------------------------------
+        */
         Fortify::authenticateUsing(function ($request) {
 
-            app(\App\Http\Requests\LoginRequest::class)
-                ->setContainer(app())
-                ->setRedirector(app('redirect'))
-                ->validateResolved();
+            // LoginRequest バリデーション強制適用
+            $formRequest = app(LoginRequest::class);
+            $formRequest->setContainer(app())->setRedirector(app('redirect'));
+            $formRequest->validateResolved(); // ← バリデーション実行
 
-            if (\Auth::attempt($request->only('email', 'password'))) {
-                return \Auth::user();
+            // バリデーション済み値
+            $credentials = $formRequest->only('email', 'password');
+
+            // 認証
+            if (!Auth::attempt($credentials)) {
+                return null; // → "ログイン情報が登録されていません"
             }
 
-            return null;
+            return Auth::user();
         });
 
+        /*
+        |--------------------------------------------------------------------------
+        | Verify Email View
+        |--------------------------------------------------------------------------
+        */
         Fortify::verifyEmailView(function () {
-                return view('auth.verify-email');
-            });
-
+            return view('auth.verify-email');
+        });
     }
-
 }

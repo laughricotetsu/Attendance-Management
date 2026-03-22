@@ -90,9 +90,9 @@ class AttendanceCorrectionRequestController extends Controller
 
             // 休憩
             foreach ($attendance->breaks as $index => $break) {
-
-                $start = $request->break_start[$index] ?? null;
-                $end = $request->break_end[$index] ?? null;
+                $index2=$break->id;
+                $start = $request->breaks[$index2]['break_start'] ?? null;
+                $end = $request->breaks[$index2]['break_end'] ?? null;
 
                 if ($start != optional($break->break_start)->format('H:i')) {
 

@@ -3,56 +3,83 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 
 class LoginTest extends TestCase
 {
-use RefreshDatabase;
+    use RefreshDatabase;
 
-    /** @test */
-    public function メール未入力でエラー()
+    /**
+     * メールアドレス必須
+     */
+    public function test_email_is_required()
     {
-        User::factory()->create([
-            'password' => Hash::make('password'),
-        ]);
-
         $response = $this->post('/login', [
+            'email' => '',
             'password' => 'password',
         ]);
 
-        $response->assertSessionHasErrors(['email']);
+        $response->assertStatus(302);
+
+        $this->assertStringContainsString(
+            'メールアドレスを入力してください',
+            session('errors')->first('email')
+        );
     }
 
-    /** @test */
-    public function パスワード未入力でエラー()
+    /**
+     * パスワード必須
+     */
+    public function test_password_is_required()
+    {
+        $response = $this->post('/login', [
+            'email' => 'test@example.com',
+            'password' => '',
+        ]);
+
+        $response->assertStatus(302);
+
+        $this->assertStringContainsString(
+            'パスワードを入力してください',
+            session('errors')->first('password')
+        );
+    }
+
+    /**
+     * 認証失敗
+     */
+    public function test_login_fails_with_invalid_credentials()
+    {
+        $response = $this->post('/login', [
+            'email' => 'not_exist@example.com',
+            'password' => 'wrongpassword',
+        ]);
+
+        $response->assertStatus(302);
+
+        $this->assertStringContainsString(
+            'ログイン情報が登録されていません',
+            session('errors')->first('email')
+        );
+    }
+
+    /**
+     * ログイン成功
+     */
+    public function test_login_success()
     {
         $user = User::factory()->create([
-            'password' => Hash::make('password'),
+            'password' => bcrypt('password'),
         ]);
 
         $response = $this->post('/login', [
             'email' => $user->email,
-        ]);
-
-        $response->assertSessionHasErrors(['password']);
-    }
-
-    /** @test */
-    public function 認証情報が一致しない場合エラー()
-    {
-        $user = User::factory()->create([
-            'email' => 'test@example.com',
-            'password' => Hash::make('password'),
-        ]);
-
-        $response = $this->post('/login', [
-            'email' => 'wrong@example.com',
             'password' => 'password',
         ]);
 
-        $response->assertSessionHasErrors();
+        $response->assertStatus(302);
+        $response->assertRedirect('/attendance');
+        $this->assertAuthenticatedAs($user);
     }
 }

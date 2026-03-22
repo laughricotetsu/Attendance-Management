@@ -168,3 +168,46 @@ textarea {
     font-weight: bold;
     display: inline-block;
 }
+
+/* ===== 差分表示 ===== */
+
+.diff-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.diff-table th {
+    text-align: left;
+    width: 140px;
+    background: #f5f5f5;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.diff-table td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.diff-row-changed {
+    background-color: #fff8e1;
+    /* 変更あり：薄い黄色 */
+}
+
+.diff-old {
+    color: #999;
+    text-decoration: line-through;
+    margin-right: 8px;
+}
+
+.diff-new {
+    color: #e53935;
+    font-weight: bold;
+}
+
+.diff-label {
+    font-size: 14px;
+    color: #e53935;
+    margin-left: 8px;
+}

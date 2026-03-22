@@ -35,37 +35,6 @@ class AttendanceController extends Controller
         return view('attendance.index', compact('attendance', 'status'));
     }
 
-    public function show($id)
-    {
-        $attendance = Attendance::with(['user','breaks'])
-            ->findOrFail($id);
-
-        $isAdmin = auth()->user()->is_admin ?? false;
-
-        $pendingRequest = AttendanceCorrectionRequest::where('attendance_id',$id)
-            ->where('status','pending')
-            ->exists();
-
-        $correctionRequest = null;
-
-        if($isAdmin){
-
-            $correctionRequest = AttendanceCorrectionRequest::where('attendance_id',$id)
-                ->where('status','pending')
-                ->first();
-        }
-
-        return view(
-            'attendance.detail',
-            compact(
-                'attendance',
-                'isAdmin',
-                'pendingRequest',
-                'correctionRequest'
-            )
-        );
-    }
-
     public function startWork()
     {
         $today = Carbon::today();
@@ -171,17 +140,18 @@ class AttendanceController extends Controller
         // 管理者判定
         $isAdmin = Auth::user()->is_admin ?? false;
 
-        // 承認待ち申請
-        $pendingRequest = AttendanceCorrectionRequest::where('attendance_id',$id)
-            ->where('status','pending')
-            ->exists();
+        // 承認待ち申請（details付き）
+        $pendingRequest = AttendanceCorrectionRequest::with('details')
+            ->where('attendance_id', $id)
+            ->where('status', 'pending')
+            ->first();
 
         // 管理者用申請データ
         $correctionRequest = null;
 
         if ($isAdmin) {
-
-            $correctionRequest = AttendanceCorrectionRequest::where('attendance_id',$id)
+            $correctionRequest = AttendanceCorrectionRequest::with('details')
+                ->where('attendance_id',$id)
                 ->where('status','pending')
                 ->first();
         }

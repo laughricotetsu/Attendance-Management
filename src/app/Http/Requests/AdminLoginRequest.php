@@ -19,6 +19,11 @@ class AdminLoginRequest extends FormRequest
         ];
     }
 
+    protected function getRedirectUrl()
+    {
+        return route('admin.login');
+    }
+
     public function attributes(): array
     {
         return [

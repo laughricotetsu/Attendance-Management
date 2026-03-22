@@ -3,88 +3,108 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class RegisterTest extends TestCase
 {
-use RefreshDatabase;
+    use RefreshDatabase;
 
     /** @test */
-    public function 名前が未入力の場合エラーになる()
+    public function test_name_is_required()
     {
-        $response = $this->post('/register', [
+        $response = $this->from('/register')->post('/register', [
+            'name' => '',
             'email' => 'test@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
         ]);
 
-        $response->assertSessionHasErrors(['name']);
+        $response->assertRedirect('/register');
+        $response->assertSessionHasErrors([
+            'name' => 'お名前を入力してください',
+        ]);
     }
 
     /** @test */
-    public function メールが未入力の場合エラーになる()
+    public function test_email_is_required()
     {
-        $response = $this->post('/register', [
-            'name' => 'テスト',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+        $response = $this->from('/register')->post('/register', [
+            'name' => 'テストユーザー',
+            'email' => '',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
         ]);
 
-        $response->assertSessionHasErrors(['email']);
+        $response->assertRedirect('/register');
+        $response->assertSessionHasErrors([
+            'email' => 'メールアドレスを入力してください',
+        ]);
     }
 
     /** @test */
-    public function パスワードが8文字未満だとエラー()
+    public function test_password_must_be_at_least_8_chars()
     {
-        $response = $this->post('/register', [
-            'name' => 'テスト',
+        $response = $this->from('/register')->post('/register', [
+            'name' => 'テストユーザー',
             'email' => 'test@example.com',
-            'password' => '1234',
-            'password_confirmation' => '1234',
+            'password' => '1234567',
+            'password_confirmation' => '1234567',
         ]);
 
-        $response->assertSessionHasErrors(['password']);
+        $response->assertRedirect('/register');
+        $response->assertSessionHasErrors([
+            'password' => 'パスワードは8文字以上で入力してください',
+        ]);
     }
 
     /** @test */
-    public function パスワード不一致でエラー()
+    public function test_password_confirmation_must_match()
     {
-        $response = $this->post('/register', [
-            'name' => 'テスト',
+        $response = $this->from('/register')->post('/register', [
+            'name' => 'テストユーザー',
             'email' => 'test@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'different',
+            'password' => 'password123',
+            'password_confirmation' => 'wrongpass',
         ]);
 
-        $response->assertSessionHasErrors(['password']);
+        $response->assertRedirect('/register');
+        $response->assertSessionHasErrors([
+            'password' => 'パスワードと一致しません',
+        ]);
     }
 
     /** @test */
-    public function パスワード未入力でエラー()
+    public function test_password_is_required()
     {
-        $response = $this->post('/register', [
-            'name' => 'テスト',
+        $response = $this->from('/register')->post('/register', [
+            'name' => 'テストユーザー',
             'email' => 'test@example.com',
+            'password' => '',
+            'password_confirmation' => '',
         ]);
 
-        $response->assertSessionHasErrors(['password']);
+        $response->assertRedirect('/register');
+        $response->assertSessionHasErrors([
+            'password' => 'パスワードを入力してください',
+        ]);
     }
 
     /** @test */
-    public function 正常に登録できる()
+    public function test_user_can_register_successfully()
     {
         $response = $this->post('/register', [
-            'name' => 'テスト',
+            'name' => 'テストユーザー',
             'email' => 'test@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
         ]);
-
-        $response->assertSessionHasNoErrors();
 
         $this->assertDatabaseHas('users', [
             'email' => 'test@example.com',
         ]);
+
+        $response->assertRedirect('/email/verify');
     }
 }

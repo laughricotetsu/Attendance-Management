@@ -19,15 +19,6 @@
 
     <div class="detail-card">
 
-                        @if ($errors->any())
-                    <div class="error-area">
-
-                        @foreach ($errors->all() as $error)
-                            <p class="error-message">{{ $error }}</p>
-                        @endforeach
-
-                    </div>
-                    @endif
 
         <form method="POST"
             action="{{ route('correction.request.store',$attendance->id) }}">
@@ -53,23 +44,38 @@
                 {{-- 出勤退勤 --}}
                 <tr>
                     <th>出勤・退勤</th>
-
                     <td>
 
-                        <input type="time" name="clock_in"
-                        value="{{ old('clock_in', optional($attendance->clock_in)->format('H:i')) }}"
-                        class="@error('clock_in') input-error @enderror">
+                        {{-- 出勤 --}}
+                        @php
+                            $clockIn = optional($attendance->clock_in)->format('H:i');
 
+                            if ($pendingRequest) {
+                                foreach ($pendingRequest->details as $detail) {
+                                    if ($detail->target_type === 'clock_in') {
+                                        $clockIn = $detail->after_value;
+                                    }
+                                }
+                            }
+                        @endphp
 
+                        <input type="time" name="clock_in" value="{{ old('clock_in', $clockIn) }}">
                         〜
 
-                        <input type="time" name="clock_out"
-                        value="{{ old('clock_out', optional($attendance->clock_out)->format('H:i')) }}"
-                        class="@error('clock_in') input-error @enderror">
+                        {{-- 退勤 --}}
+                        @php
+                            $clockOut = optional($attendance->clock_out)->format('H:i');
 
-                        @error('clock_in')
-                        <p class="error-message">{{ $message }}</p>
-                        @enderror
+                            if ($pendingRequest) {
+                                foreach ($pendingRequest->details as $detail) {
+                                    if ($detail->target_type === 'clock_out') {
+                                        $clockOut = $detail->after_value;
+                                    }
+                                }
+                            }
+                        @endphp
+
+                        <input type="time" name="clock_out" value="{{ old('clock_out', $clockOut) }}">
 
                     </td>
                 </tr>
@@ -77,42 +83,54 @@
                 {{-- 休憩 --}}
                 @foreach($attendance->breaks as $index => $break)
 
-                <tr>
+                    @php
+                        // 初期値：元のデータ
+                        $breakStart = optional($break->break_start)->format('H:i');
+                        $breakEnd   = optional($break->break_end)->format('H:i');
 
-                    <th>
-                        休憩{{ $index + 1 }}
-                    </th>
+                        // pending の修正申請があれば after_value を適用
+                        if ($pendingRequest) {
+                            foreach ($pendingRequest->details as $detail) {
 
-                    <td>
+                                if ($detail->target_type === 'break_start' && $detail->target_id == $break->id) {
+                                    $breakStart = $detail->after_value;
+                                }
 
-                        <input type="time"
-                        name="breaks[{{ $break->id }}][break_start]"
-                        value="{{ old('breaks.'.$break->id.'.break_start', optional($break->break_start)->format('H:i')) }}"
-                        class="@error('break_start') input-error @enderror">
+                                if ($detail->target_type === 'break_end' && $detail->target_id == $break->id) {
+                                    $breakEnd = $detail->after_value;
+                                }
+                            }
+                        }
+                    @endphp
 
+                    <tr>
+                        <th>休憩{{ $index + 1 }}</th>
+                        <td>
 
-                        〜
+                            <input type="time"
+                                name="breaks[{{ $break->id }}][break_start]"
+                                value="{{ old('breaks.'.$break->id.'.break_start', $breakStart) }}"
+                                class="@error('break_start') input-error @enderror">
 
-                        <input type="time"
-                        name="breaks[{{ $break->id }}][break_end]"
-                        value="{{ old('breaks.'.$break->id.'.break_end', optional($break->break_end)->format('H:i')) }}"
-                        class="@error('break_end') input-error @enderror">
+                            〜
 
-                        @error('break_start')
-                        <p class="error-message">{{ $message }}</p>
-                        @enderror
+                            <input type="time"
+                                name="breaks[{{ $break->id }}][break_end]"
+                                value="{{ old('breaks.'.$break->id.'.break_end', $breakEnd) }}"
+                                class="@error('break_end') input-error @enderror">
 
-                        @error('break_end')
-                        <p class="error-message">{{ $message }}</p>
-                        @enderror
+                            @error('break_start')
+                            <p class="error-message">{{ $message }}</p>
+                            @enderror
 
+                            @error('break_end')
+                            <p class="error-message">{{ $message }}</p>
+                            @enderror
 
-                    </td>
-
-                </tr>
+                        </td>
+                    </tr>
 
                 @endforeach
-
 
                 {{-- 休憩追加 --}}
                 @if(!$isAdmin)
@@ -149,8 +167,20 @@
 
                     <td>
 
-                        <textarea name="remarks"
-                        class="@error('remarks') input-error @enderror">{{ old('remarks', $attendance->remarks) }}</textarea>
+                @php
+                $remarks = $attendance->remarks;
+
+                if ($pendingRequest) {
+                    foreach ($pendingRequest->details as $detail) {
+                        if ($detail->target_type === 'remarks') {
+                            $remarks = $detail->after_value;
+                        }
+                    }
+                }
+                @endphp
+
+                <textarea name="remarks">{{ old('remarks', $remarks) }}</textarea>
+
 
                         @error('remarks')
                         <p class="error-message">{{ $message }}</p>
@@ -190,6 +220,74 @@
                 </button>
 
                 @else
+
+            @if($pendingRequest)
+
+                <div class="diff-container">
+                    <h3>修正申請内容（承認待ち）</h3>
+
+                    <table class="diff-table">
+
+                        @foreach($pendingRequest->details as $detail)
+
+                            @php
+                                $before = $detail->before_value;
+                                $after  = $detail->after_value;
+
+                                $isChanged = $before !== $after;
+
+                                // ラベル
+                                switch ($detail->target_type) {
+                                    case 'clock_in':
+                                        $label = '出勤';
+                                        break;
+
+                                    case 'clock_out':
+                                        $label = '退勤';
+                                        break;
+
+                                    case 'break_start':
+                                        $label = '休憩開始';
+                                        break;
+
+                                    case 'break_end':
+                                        $label = '休憩終了';
+                                        break;
+
+                                    case 'remarks':
+                                        $label = '備考';
+                                        break;
+                                }
+
+                                // 表示整形
+                                if ($detail->target_type === 'remarks') {
+                                    $beforeDisp = $before ?: '（空）';
+                                    $afterDisp  = $after ?: '（空）';
+                                } else {
+                                    $beforeDisp = $before ? \Carbon\Carbon::parse($before)->format('H:i') : '（空）';
+                                    $afterDisp  = $after  ? \Carbon\Carbon::parse($after)->format('H:i')  : '（空）';
+                                }
+                            @endphp
+
+                            <tr class="{{ $isChanged ? 'diff-row-changed' : '' }}">
+                                <th>{{ $label }}</th>
+                                <td>
+                                    <span class="diff-old">{{ $beforeDisp }}</span>
+                                    →
+                                    <span class="diff-new">{{ $afterDisp }}</span>
+
+                                    @if($isChanged)
+                                        <span class="diff-label">変更</span>
+                                    @endif
+                                </td>
+                            </tr>
+
+                        @endforeach
+
+                    </table>
+                </div>
+
+            @endif
 
                 <button class="pending-button" disabled>
                     ＊承認待ちのため修正はできません。
