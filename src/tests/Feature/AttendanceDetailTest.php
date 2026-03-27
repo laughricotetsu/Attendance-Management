@@ -82,5 +82,7 @@ class AttendanceDetailTest extends TestCase
                 ->assertSee('12:00')
                 ->assertSee('13:00');
         }
+
+        
     }
     

@@ -110,20 +110,20 @@
                             <input type="time"
                                 name="breaks[{{ $break->id }}][break_start]"
                                 value="{{ old('breaks.'.$break->id.'.break_start', $breakStart) }}"
-                                class="@error('break_start') input-error @enderror">
+                                class="@error('breaks.'.$break->id.'break_start') input-error @enderror">
 
                             〜
 
                             <input type="time"
                                 name="breaks[{{ $break->id }}][break_end]"
                                 value="{{ old('breaks.'.$break->id.'.break_end', $breakEnd) }}"
-                                class="@error('break_end') input-error @enderror">
+                                class="@error('breaks.'.$break->id.'.break_end') input-error @enderror">
 
-                            @error('break_start')
+                            @error('breaks.' . $break->id . '.break_start')
                             <p class="error-message">{{ $message }}</p>
                             @enderror
 
-                            @error('break_end')
+                            @error('breaks.' . $break->id . '.break_end')
                             <p class="error-message">{{ $message }}</p>
                             @enderror
 
@@ -143,14 +143,21 @@
 
                     <td>
 
-                    <input type="time"
-                    name="breaks[new][break_start]">
+                        <input type="time"
+                        name="breaks[new][break_start]">
 
-                    〜
+                        〜
 
-                    <input type="time"
-                    name="breaks[new][break_end]">
+                        <input type="time"
+                        name="breaks[new][break_end]">
 
+                            @error('breaks.new.break_start')
+                            <p class="error-message">{{ $message }}</p>
+                            @enderror
+
+                            @error('breaks.new.break_end')
+                            <p class="error-message">{{ $message }}</p>
+                            @enderror
                     </td>
 
                 </tr>

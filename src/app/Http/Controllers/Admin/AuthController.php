@@ -15,7 +15,7 @@ public function login(AdminLoginRequest $request)
 
     if (Auth::attempt($credentials)) {
 
-        // セッション再生成（超重要）
+        // セッション再生成
         $request->session()->regenerate();
 
         // adminだけ通す

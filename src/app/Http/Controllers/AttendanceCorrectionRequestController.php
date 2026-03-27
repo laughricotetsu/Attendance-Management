@@ -87,7 +87,6 @@ class AttendanceCorrectionRequestController extends Controller
                     'updated_at' => now(),
                 ];
             }
-
             // 休憩
             foreach ($attendance->breaks as $index => $break) {
                 $index2=$break->id;
