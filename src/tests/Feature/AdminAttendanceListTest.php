@@ -96,6 +96,36 @@ class AdminAttendanceListTest extends TestCase
             $response->assertSee($user->name);
         }
 
+        public function test_翌日を押すと翌日の勤怠が表示される()
+        {
+            $admin = User::factory()->create([
+                'role' => 'admin',
+            ]);
+
+            $tomorrow = today()->addDay()->toDateString();
+
+            $user = User::factory()->create();
+
+            Attendance::factory()->create([
+                'user_id' => $user->id,
+                'work_date' => $tomorrow,
+            ]);
+
+            $this->actingAs($admin);
+
+            $response = $this->get('/admin/attendance/list?date=' . $tomorrow);
+
+            $response->assertStatus(200);
+
+            // 日付確認
+            $response->assertSee(
+                \Carbon\Carbon::parse($tomorrow)->format('Y年n月j日')
+            );
+
+            // ユーザー表示確認
+            $response->assertSee($user->name);
+        }
+
 
 
 }

@@ -32,10 +32,23 @@
             <div class="label">出勤・退勤</div>
             <div class="value time-range">
                 <input type="time" name="clock_in" value="{{ optional($attendance->clock_in)->format('H:i') }}">
+
                 <span>〜</span>
+
                 <input type="time" name="clock_out" value="{{ optional($attendance->clock_out)->format('H:i') }}">
             </div>
+
         </div>
+
+            @error('clock_in')
+            <p class="error-message">{{ $message }}</p>
+            @enderror
+
+            @error('clock_out')
+            <p class="error-message">{{ $message }}</p>
+            @enderror
+
+
         {{-- 休憩 --}}
 
 
@@ -56,18 +69,30 @@
 
                 </div>
             </div>
+
+            @error('breaks.' . $break->id . '.break_start')
+            <p class="error-message">{{ $message }}</p>
+            @enderror
+
+            @error('breaks.' . $break->id . '.break_end')
+            <p class="error-message">{{ $message }}</p>
+            @enderror
+
         @endforeach
 
-@if($attendance->breaks->isEmpty())
-    <div class="row">
-        <div class="label">休憩</div>
-        <div class="value time-range">
-            <input type="time" name="new_break[break_start]">
-            <span>〜</span>
-            <input type="time" name="new_break[break_end]">
-        </div>
-    </div>
-@endif
+        @if($attendance->breaks->isEmpty())
+            <div class="row">
+                <div class="label">休憩</div>
+                <div class="value time-range">
+                    <input type="time" name="new_break[break_start]">
+                    @error('breaks.new.break_start')
+                        <p class="error-message">{{ $message }}</p>
+                    @enderror
+                    <span>〜</span>
+                    <input type="time" name="new_break[break_end]">
+                </div>
+            </div>
+        @endif
 
 
         {{-- 追加用の空休憩 --}}
@@ -84,7 +109,11 @@
         <div class="row">
             <div class="label">備考</div>
             <div class="value">
-                <!-- <input type="text" name="note" value="{{ $attendance->note ?? '' }}"> -->
+                <textarea name="remarks">{{ old('remarks', $attendance->remarks) }}</textarea>
+
+                        @error('remarks')
+                        <p class="error-message">{{ $message }}</p>
+                        @enderror
             </div>
         </div>
     </div>

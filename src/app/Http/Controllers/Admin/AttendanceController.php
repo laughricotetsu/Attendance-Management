@@ -7,6 +7,8 @@ use App\Models\Attendance;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Http\Requests\AttendanceCorrectionStoreRequest;
+
 
 
 class AttendanceController extends Controller
@@ -41,7 +43,8 @@ class AttendanceController extends Controller
 
         return view('admin.attendance.detail', compact('attendance'));
     }
-    public function update(Request $request, Attendance $attendance)
+
+    public function update(AttendanceCorrectionStoreRequest $request, Attendance $attendance)
     {
 
         $user = auth()->user();

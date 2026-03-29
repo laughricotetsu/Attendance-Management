@@ -123,7 +123,7 @@ class AttendanceController extends Controller
         $endOfMonth   = $currentMonth->copy()->endOfMonth();
 
         // その月の勤怠取得
-        $attendances = Attendance::with('breaks')   // ← これを追加
+        $attendances = Attendance::with('breaks')
             ->where('user_id', auth()->id())
             ->whereBetween('work_date', [$startOfMonth, $endOfMonth])
             ->orderBy('work_date', 'asc')
@@ -167,7 +167,7 @@ class AttendanceController extends Controller
         );
     }
 
-    public function update(Request $request, Attendance $attendance)
+    public function update(AttendanceCorrectionStoreRequest $request, Attendance $attendance)
     {
 
         // 他人の勤怠編集禁止

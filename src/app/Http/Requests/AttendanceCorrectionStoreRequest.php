@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Carbon\Carbon;
 
 class AttendanceCorrectionStoreRequest extends FormRequest
 {
@@ -14,9 +15,9 @@ class AttendanceCorrectionStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'clock_in' => ['nullable'],
-            'clock_out' => ['nullable'],
-            'remarks' => ['required'],
+        'clock_in' => ['required', 'date_format:H:i'],
+        'clock_out' => ['required', 'date_format:H:i'],
+        'remarks' => ['required'],
         ];
     }
 
@@ -31,23 +32,25 @@ class AttendanceCorrectionStoreRequest extends FormRequest
     {
         $validator->after(function ($validator) {
 
-            $clockIn = $this->clock_in;
-            $clockOut = $this->clock_out;
+            $clockIn = $this->clock_in
+                ? Carbon::createFromFormat('H:i', $this->clock_in)
+                : null;
 
+            $clockOut = $this->clock_out
+                ? Carbon::createFromFormat('H:i', $this->clock_out)
+                : null;
             /*
             |--------------------------------------------------------------------------
             | 出勤・退勤チェック
             |--------------------------------------------------------------------------
             */
 
-            if ($clockIn && $clockOut && $clockIn >= $clockOut) {
-
+            if ($clockIn && $clockOut && $clockIn->gte($clockOut)) {
                 $validator->errors()->add(
                     'clock_in',
-                    '出勤時間が不適切な値です'
+                    '出勤時間もしくは退勤時間が不適切な値です'
                 );
             }
-
             /*
             |--------------------------------------------------------------------------
             | 休憩時間チェック
@@ -58,11 +61,19 @@ class AttendanceCorrectionStoreRequest extends FormRequest
 
                 foreach ($this->breaks as $index => $break) {
 
-                    $breakStart = $break['break_start'] ?? null;
-                    $breakEnd = $break['break_end'] ?? null;
+                    // $breakStart = $break['break_start'] ?? null;
+                    // $breakEnd = $break['break_end'] ?? null;
+
+                $breakStart = isset($break['break_start'])
+                    ? Carbon::createFromFormat('H:i', $break['break_start'])
+                    : null;
+
+                $breakEnd = isset($break['break_end'])
+                    ? Carbon::createFromFormat('H:i', $break['break_end'])
+                    : null;
 
                     // 休憩開始 < 出勤
-                    if ($breakStart && $clockIn && $breakStart < $clockIn) {
+                    if ($breakStart && $clockIn && $breakStart->lt($clockIn)) {
 
                         $validator->errors()->add(
                             'breaks.' . $index . '.break_start',
@@ -71,7 +82,7 @@ class AttendanceCorrectionStoreRequest extends FormRequest
                     }
 
                     // 休憩開始 > 退勤
-                    if ($breakStart && $clockOut && $breakStart > $clockOut) {
+                    if ($breakStart && $clockOut && $breakStart->gt($clockOut)){
 
                         $validator->errors()->add(
                             'breaks.' . $index . '.break_start',
@@ -80,7 +91,7 @@ class AttendanceCorrectionStoreRequest extends FormRequest
                     }
 
                     // 休憩終了 > 退勤
-                    if ($breakEnd && $clockOut && $breakEnd > $clockOut) {
+                    if ($breakEnd && $clockOut && $breakEnd->gt($clockOut)) {
 
                         $validator->errors()->add(
                             'breaks.' . $index . '.break_end',
@@ -89,7 +100,7 @@ class AttendanceCorrectionStoreRequest extends FormRequest
                     }
 
                     // 休憩終了 < 休憩開始
-                    if ($breakStart && $breakEnd && $breakEnd < $breakStart) {
+                    if ($breakStart && $breakEnd && $breakEnd->lt($breakStart)) {
 
                         $validator->errors()->add(
                             'breaks.' . $index . '.break_end',

@@ -77,7 +77,16 @@
 
                         <input type="time" name="clock_out" value="{{ old('clock_out', $clockOut) }}">
 
+                        @error('clock_in')
+                            <p class="error-message">{{ $message }}</p>
+                        @enderror
+
+                        @error('clock_out')
+                            <p class="error-message">{{ $message }}</p>
+                        @enderror
+
                     </td>
+
                 </tr>
 
                 {{-- 休憩 --}}
@@ -110,7 +119,8 @@
                             <input type="time"
                                 name="breaks[{{ $break->id }}][break_start]"
                                 value="{{ old('breaks.'.$break->id.'.break_start', $breakStart) }}"
-                                class="@error('breaks.'.$break->id.'break_start') input-error @enderror">
+                                class="@error('breaks.'.$break->id.'.break_start') input-error @enderror">
+
 
                             〜
 
@@ -120,17 +130,20 @@
                                 class="@error('breaks.'.$break->id.'.break_end') input-error @enderror">
 
                             @error('breaks.' . $break->id . '.break_start')
-                            <p class="error-message">{{ $message }}</p>
+                                <p class="error-message">{{ $message }}</p>
                             @enderror
 
                             @error('breaks.' . $break->id . '.break_end')
-                            <p class="error-message">{{ $message }}</p>
+                                <p class="error-message">{{ $message }}</p>
                             @enderror
 
                         </td>
+
+
                     </tr>
 
                 @endforeach
+
 
                 {{-- 休憩追加 --}}
                 @if(!$isAdmin)
