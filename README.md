@@ -157,7 +157,7 @@ http://localhost:8025
 | user_id | unsigned bigint |  |  | ◯ | ◯ |  
 | status | string |  |  |  |  |  
 | reason | string |  |  | ◯ |  |  
-| approved_by | unsigned bigint |  |  | ◯ | ◯ |  
+| approved_by | unsigned bigint |  |  |  | ◯ |  
 | approved_at | timestamp |  |  |  |  |  
 | created_at | timestamp |  |  |  |  |  
 | updated_at | timestamp |  |  |  |  |  
