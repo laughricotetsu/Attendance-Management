@@ -21,7 +21,7 @@
                 <tr>
                 <th>名前</th>
                 <th>メールアドレス</th>
-                <th>勤怠</th>
+                <th>月次勤怠</th>
                 </tr>
 
             </thead>
@@ -52,7 +52,7 @@
             </tbody>
 
         </table>
-
+{{ $users->links('pagination::bootstrap-4') }}
     </div>
 
 </div>
